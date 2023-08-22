@@ -1,0 +1,14 @@
+/*----------------------------------*-C-*------------------------------------*
+ * Copyright 2023 UT-Battelle, LLC, and other Queue-QIR developers.
+ * See the top-level COPYRIGHT file for details.
+ * SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
+ *---------------------------------------------------------------------------*/
+/*! \file qqir_config.h
+ * Configuration-specific options for Queue-QIR.
+ *---------------------------------------------------------------------------*/
+#ifndef qqir_config_h
+#define qqir_config_h
+
+#cmakedefine01 QQIR_DEBUG
+
+#endif /* qqir_config_h */
