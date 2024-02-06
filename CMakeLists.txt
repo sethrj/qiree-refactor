@@ -19,12 +19,21 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake")
 include(GNUInstallDirs)
 include(CMakePackageConfigHelpers)
 
+macro(qiree_set_default name value)
+  if(NOT DEFINED ${name})
+    message(VERBOSE "QIR-EE set default ${name}=${value}")
+    set(${name} "${value}")
+  endif()
+  list(APPEND QIREE_DEFAULT_VARIABLES ${name})
+endmacro()
+
 #----------------------------------------------------------------------------#
 # MAIN OPTIONS
 #----------------------------------------------------------------------------#
 
 # Components
 option(QIREE_BUILD_TESTS "Build QIR-EE unit tests" ON)
+qiree_set_default(BUILD_TESTING ${QIREE_BUILD_TESTS})
 
 # Assertion handling
 option(QIREE_DEBUG "Enable runtime assertions" ON)
@@ -38,14 +47,6 @@ option(QIREE_DEBUG "Enable runtime assertions" ON)
 # changing behavior of other code that was loaded before this project) set them
 # as # local variables to be inherited underneath this directory.
 #----------------------------------------------------------------------------#
-
-macro(qiree_set_default name value)
-  if(NOT DEFINED ${name})
-    message(VERBOSE "QIR-EE set default ${name}=${value}")
-    set(${name} "${value}")
-  endif()
-  list(APPEND QIREE_DEFAULT_VARIABLES ${name})
-endmacro()
 
 ### Configuration ###
 qiree_set_default(CMAKE_EXPORT_NO_PACKAGE_REGISTRY ON)

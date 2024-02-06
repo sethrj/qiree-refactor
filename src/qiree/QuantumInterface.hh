@@ -16,51 +16,37 @@ namespace qiree
  * Interface class for the \c qis (quantum) namespace.
  *
  * \code
-void @__quantum__qis__mz__body(%Qubit*, %Result*)
-void @__quantum__qis__h__body(%Qubit*)
-void @__quantum__qis__cnot__body(%Qubit*, %Qubit*)
-i1 @__quantum__qis__read_result__body(%Result*)
+    void @__quantum__qis__mz__body(%Qubit*, %Result*)
+    void @__quantum__qis__h__body(%Qubit*)
+    void @__quantum__qis__cnot__body(%Qubit*, %Qubit*)
+    i1 @__quantum__qis__read_result__body(%Result*)
  * \endcode
  */
 class QuantumInterface
 {
   public:
-    /*!
-     * Measure the qubit and store in the result.
-     */
+    //! Measure the qubit and store in the result.
     virtual void mz(Qubit, Result) = 0;
 
-    /*!
-     * Apply the H gate to the given qubit.
-     */
+    //! Apply the H gate to the given qubit.
     virtual void h(Qubit) = 0;
 
-    /*!
-     * Apply the CNOT gate to the given qubits.
-     */
+    //! Apply the CNOT gate to the given qubits.
     virtual void cnot(Qubit, Qubit) = 0;
 
-    /*!
-     * Read the value of a result.
-     *
-     * \return |0> or |1>
-     */
+    //! Read the value of a result.
     virtual QState read_result(Result) = 0;
 
 #if 0
-    /*!
-     * Apply the S gate to the given qubit.
-     */
+    //! Apply the S gate to the given qubit.
     virtual void s(Qubit) = 0;
 
-    /*!
-     * Apply the adjoint S gate to the given qubit.
-     */
+    //! Apply the adjoint S gate to the given qubit.
     virtual void s(AdjTag, Qubit, Qubit) = 0;
 #endif
 
   protected:
-    virtual ~ResultInterface() = default;
+    virtual ~QuantumInterface() = default;
 };
 
 //---------------------------------------------------------------------------//

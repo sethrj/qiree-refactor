@@ -8,6 +8,7 @@
 #pragma once
 
 #include <memory>
+#include <string>
 
 #include "Macros.hh"
 
@@ -31,8 +32,14 @@ class ResultInterface;
 class LlvmExecutor
 {
   public:
-    // Construct with a QIR input filename
-    explicit LlvmExecutor(std::string const& filename);
+    // Construct with a QIR input filename and function name
+    LlvmExecutor(std::string const& filename, std::string const& entrypoint);
+
+    //! Construct with a QIR input filename to run "main" from
+    explicit LlvmExecutor(std::string const& filename)
+        : LlvmExecutor{filename, "main"}
+    {
+    }
 
     // Default destructor
     ~LlvmExecutor();
@@ -44,6 +51,7 @@ class LlvmExecutor
 
   private:
     std::unique_ptr<llvm::Module> mod_;
+    llvm::Function* entrypoint_{nullptr};
     std::unique_ptr<llvm::ExecutionEngine> ee_;
     std::unique_ptr<llvm::Function> ifstmt_;
 };

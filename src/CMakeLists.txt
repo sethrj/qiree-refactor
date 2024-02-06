@@ -23,7 +23,6 @@ llvm_map_components_to_libnames(_llvm_libs
   Support
   nativecodegen
 )
-message(STATUS "${_llvm_libs}")
 
 #----------------------------------------------------------------------------#
 # LIBRARIES
