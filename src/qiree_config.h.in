@@ -3,12 +3,12 @@
  * See the top-level COPYRIGHT file for details.
  * SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
  *---------------------------------------------------------------------------*/
-/*! \file qqir_config.h
+/*! \file qiree_config.h
  * Configuration-specific options for QIR-EE.
  *---------------------------------------------------------------------------*/
-#ifndef qqir_config_h
-#define qqir_config_h
+#ifndef qiree_config_h
+#define qiree_config_h
 
-#cmakedefine01 QQIR_DEBUG
+#cmakedefine01 QIREE_DEBUG
 
-#endif /* qqir_config_h */
+#endif /* qiree_config_h */

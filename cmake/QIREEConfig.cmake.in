@@ -5,13 +5,13 @@
 #----------------------------------------------------------------------------#
 
 # Set up CMAKE paths
-get_filename_component(QQIR_CMAKE_DIR "${CMAKE_CURRENT_LIST_FILE}" DIRECTORY)
+get_filename_component(QIREE_CMAKE_DIR "${CMAKE_CURRENT_LIST_FILE}" DIRECTORY)
 list(APPEND CMAKE_MODULE_PATH
-  "${QQIR_CMAKE_DIR}"
+  "${QIREE_CMAKE_DIR}"
 )
 if(CMAKE_VERSION VERSION_LESS 3.18)
   list(APPEND CMAKE_MODULE_PATH
-    "${QQIR_CMAKE_DIR}/backport/3.18"
+    "${QIREE_CMAKE_DIR}/backport/3.18"
   )
 endif()
 
@@ -39,7 +39,7 @@ endif()
 # Variables
 #-----------------------------------------------------------------------------#
 
-@QQIR_EXPORT_VARIABLES@
+@QIREE_EXPORT_VARIABLES@
 
 #-----------------------------------------------------------------------------#
 # Dependencies
@@ -49,7 +49,7 @@ include(CMakeFindDependencyMacro)
 
 find_dependency(LLVM @LLVM_VERSION@ REQUIRED)
 
-if(QQIR_BUILD_TESTS)
+if(QIREE_BUILD_TESTS)
   if(CMAKE_VERSION VERSION_LESS 3.20)
     # First look for standard CMake installation
     # (automatically done for CMake >= 3.20)
@@ -66,7 +66,7 @@ endif()
 #-----------------------------------------------------------------------------#
 
 if(NOT TARGET QIR-EE)
-  include("${QQIR_CMAKE_DIR}/QQIRTargets.cmake")
+  include("${QIREE_CMAKE_DIR}/QQIRTargets.cmake")
 endif()
 
 #-----------------------------------------------------------------------------#

@@ -39,7 +39,7 @@ option(QIREE_DEBUG "Enable runtime assertions" ON)
 # as # local variables to be inherited underneath this directory.
 #----------------------------------------------------------------------------#
 
-macro(qqir_set_default name value)
+macro(qiree_set_default name value)
   if(NOT DEFINED ${name})
     message(VERBOSE "QIR-EE set default ${name}=${value}")
     set(${name} "${value}")
@@ -48,9 +48,9 @@ macro(qqir_set_default name value)
 endmacro()
 
 ### Configuration ###
-qqir_set_default(CMAKE_EXPORT_NO_PACKAGE_REGISTRY ON)
-qqir_set_default(CMAKE_FIND_USE_PACKAGE_REGISTRY FALSE)
-qqir_set_default(CMAKE_FIND_USE_SYSTEM_PACKAGE_REGISTRY FALSE)
+qiree_set_default(CMAKE_EXPORT_NO_PACKAGE_REGISTRY ON)
+qiree_set_default(CMAKE_FIND_USE_PACKAGE_REGISTRY FALSE)
+qiree_set_default(CMAKE_FIND_USE_SYSTEM_PACKAGE_REGISTRY FALSE)
 
 ### Build flags ###
 # Default to debug or released based on value of QIREE_DEBUG
@@ -65,28 +65,28 @@ if(DEFINED CMAKE_BUILD_TYPE AND NOT CMAKE_BUILD_TYPE)
   unset(_default_build_type)
 endif()
 # Default to using C++17 everywhere
-qqir_set_default(CMAKE_CXX_STANDARD 17)
-qqir_set_default(CMAKE_CXX_EXTENSIONS OFF)
+qiree_set_default(CMAKE_CXX_STANDARD 17)
+qiree_set_default(CMAKE_CXX_EXTENSIONS OFF)
 
 ### Linking flags ###
 # Default to building shared libraries (*not* a cache variable)
-qqir_set_default(BUILD_SHARED_LIBS ON)
+qiree_set_default(BUILD_SHARED_LIBS ON)
 # Inform installed binaries of external library rpaths
-qqir_set_default(CMAKE_INSTALL_RPATH_USE_LINK_PATH ON)
+qiree_set_default(CMAKE_INSTALL_RPATH_USE_LINK_PATH ON)
 if(BUILD_SHARED_LIBS)
   # Inform installed binaries of internal library rpaths
-  qqir_set_default(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_FULL_LIBDIR}")
+  qiree_set_default(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_FULL_LIBDIR}")
   # Do not relink libs/binaries when dependent shared libs change
-  qqir_set_default(CMAKE_LINK_DEPENDS_NO_SHARED ON)
+  qiree_set_default(CMAKE_LINK_DEPENDS_NO_SHARED ON)
 endif()
 
 ### Installation flags ###
 # When developing add checking for proper usage of `install(`
 if(QIREE_DEBUG)
-  qqir_set_default(CMAKE_ERROR_ON_ABSOLUTE_INSTALL_DESTINATION ON)
+  qiree_set_default(CMAKE_ERROR_ON_ABSOLUTE_INSTALL_DESTINATION ON)
 endif()
 # Avoid printing details about already installed files
-qqir_set_default(CMAKE_INSTALL_MESSAGE LAZY)
+qiree_set_default(CMAKE_INSTALL_MESSAGE LAZY)
 
 #----------------------------------------------------------------------------#
 # UNUSED: Output locations for QIR-EE products
@@ -103,20 +103,12 @@ set(QIREE_RUNTIME_OUTPUT_DIRECTORY
 # DEPENDENCIES
 #----------------------------------------------------------------------------#
 
+enable_language(C) # Needed for LLVM
 find_package(LLVM REQUIRED)
-if(NOT LLVM_VERSION EQUAL 16)
-  message(WARNING "QIR-EE expects LLVM version 16")
+if(NOT LLVM_VERSION EQUAL 16 AND NOT DEFINED QIREE_LLVM_VERSION)
+  message(WARNING "QIR-EE expects LLVM version 16: found version ${LLVM_VERSION}")
+  set(QIREE_LLVM_VERSION ${LLVM_VERSION} CACHE INTERNAL "")
 endif()
-
-llvm_map_components_to_libnames(llvm_libs
-  Core
-  ExecutionEngine
-  Interpreter
-  MC
-  MCJIT
-  Support
-  nativecodegen
-)
 
 if(QIREE_BUILD_TESTS AND NOT GTest_FOUND)
   # TODO: download and build GTest as a subproject if not available
@@ -178,15 +170,15 @@ install(DIRECTORY "${PROJECT_SOURCE_DIR}/cmake/backport"
 
 # Export all cache variables that start with QIREE_
 set(QIREE_EXPORT_VARIABLES)
-macro(qqir_export_var varname)
+macro(qiree_export_var varname)
   list(APPEND QIREE_EXPORT_VARIABLES "set(${varname} \"${${varname}}\")")
 endmacro()
-qqir_export_var(QIREE_VERSION_STRING)
+qiree_export_var(QIREE_VERSION_STRING)
 list(APPEND QIREE_EXPORT_VARIABLES "\n# Configuration options")
 get_directory_property(_cachevar_keys CACHE_VARIABLES)
 foreach(_key IN LISTS _cachevar_keys)
   if(_key MATCHES "^QIREE_")
-    qqir_export_var(${_key})
+    qiree_export_var(${_key})
   endif()
 endforeach()
 
@@ -241,7 +233,7 @@ install(FILES
 
 # Install 'QIREETargets.cmake', included by QIREEConfig.cmake, which
 # references the targets we install.
-install(EXPORT qqir-targets
+install(EXPORT qiree-targets
   FILE QIREETargets.cmake
   NAMESPACE QIREE::
   DESTINATION "${QIREE_INSTALL_CMAKECONFIGDIR}"

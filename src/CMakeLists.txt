@@ -4,19 +4,47 @@
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 #----------------------------------------------------------------------------#
 
-configure_file("qqir_version.h.in" "qqir_version.h" @ONLY)
-configure_file("qqir_config.h.in" "qqir_config.h" @ONLY)
+configure_file(
+  "qiree_version.h.in"
+  "${QIREE_HEADER_CONFIG_DIRECTORY}/qiree_version.h"
+  @ONLY)
+configure_file("qiree_config.h.in"
+  "${QIREE_HEADER_CONFIG_DIRECTORY}/qiree_config.h"
+  @ONLY)
+
+#----------------------------------------------------------------------------#
+
+llvm_map_components_to_libnames(_llvm_libs
+  Core
+  ExecutionEngine
+  Interpreter
+  MC
+  MCJIT
+  Support
+  nativecodegen
+)
 
 #----------------------------------------------------------------------------#
 # LIBRARIES
 #----------------------------------------------------------------------------#
 
-add_library(qqir
-  stub.cc
+add_library(qiree
+  qiree/Assert.cc
 )
-add_library(QIR-EE::qqir ALIAS qqir)
-install(TARGETS qqir
-  EXPORT qqir-targets
+target_link_libraries(qiree
+  PRIVATE
+    ${_llvm_libs}
+)
+target_include_directories(qiree
+  PUBLIC
+    "$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/src>"
+    "$<BUILD_INTERFACE:${QIREE_HEADER_CONFIG_DIRECTORY}>"
+    "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>"
+)
+
+add_library(QIR-EE::qiree ALIAS qiree)
+install(TARGETS qiree
+  EXPORT qiree-targets
     ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}"
     LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}"
     COMPONENT runtime
