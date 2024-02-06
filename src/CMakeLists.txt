@@ -1,5 +1,5 @@
 #---------------------------------*-CMake-*----------------------------------#
-# Copyright 2023 UT-Battelle, LLC, and other QQIR developers.
+# Copyright 2023 UT-Battelle, LLC, and other QIR-EE developers.
 # See the top-level COPYRIGHT file for details.
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 #----------------------------------------------------------------------------#
@@ -14,7 +14,7 @@ configure_file("qqir_config.h.in" "qqir_config.h" @ONLY)
 add_library(qqir
   stub.cc
 )
-add_library(QQIR::qqir ALIAS qqir)
+add_library(QIR-EE::qqir ALIAS qqir)
 install(TARGETS qqir
   EXPORT qqir-targets
     ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}"

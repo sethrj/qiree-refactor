@@ -1,17 +1,17 @@
 #---------------------------------*-CMake-*----------------------------------#
-# Copyright 2023 UT-Battelle, LLC, and other QQIR developers.
+# Copyright 2023 UT-Battelle, LLC, and other QIR-EE developers.
 # See the top-level COPYRIGHT file for details.
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 #----------------------------------------------------------------------------#
 
 cmake_minimum_required(VERSION 3.12)
 
-# Set QQIR_VERSION using git tags using the following format
+# Set QIREE_VERSION using git tags using the following format
 set(CGV_TAG_REGEX "v([0-9.]+)(-dev|-rc.[0-9]+)?")
 include("${CMAKE_CURRENT_LIST_DIR}/cmake/CgvFindVersion.cmake")
-cgv_find_version(QQIR)
+cgv_find_version(QIREE)
 
-project(QQIR VERSION "${QQIR_VERSION}" LANGUAGES CXX)
+project(QIREE VERSION "${QIREE_VERSION}" LANGUAGES CXX)
 cmake_policy(VERSION 3.12...3.22)
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake")
@@ -24,16 +24,16 @@ include(CMakePackageConfigHelpers)
 #----------------------------------------------------------------------------#
 
 # Components
-option(QQIR_BUILD_TESTS "Build Queue-QIR unit tests" ON)
+option(QIREE_BUILD_TESTS "Build QIR-EE unit tests" ON)
 
 # Assertion handling
-option(QQIR_DEBUG "Enable runtime assertions" ON)
+option(QIREE_DEBUG "Enable runtime assertions" ON)
 
 #----------------------------------------------------------------------------#
 # CMAKE INTRINSIC OPTIONS
 #
 # These are generally used to initialize properties on targets, and it's
-# possible Queue-QIR is being built inside another project. Instead of saving
+# possible QIR-EE is being built inside another project. Instead of saving
 # these as cache variables (which change the defaults project-wide, including
 # changing behavior of other code that was loaded before this project) set them
 # as # local variables to be inherited underneath this directory.
@@ -41,10 +41,10 @@ option(QQIR_DEBUG "Enable runtime assertions" ON)
 
 macro(qqir_set_default name value)
   if(NOT DEFINED ${name})
-    message(VERBOSE "QQIR set default ${name}=${value}")
+    message(VERBOSE "QIR-EE set default ${name}=${value}")
     set(${name} "${value}")
   endif()
-  list(APPEND QQIR_DEFAULT_VARIABLES ${name})
+  list(APPEND QIREE_DEFAULT_VARIABLES ${name})
 endmacro()
 
 ### Configuration ###
@@ -53,9 +53,9 @@ qqir_set_default(CMAKE_FIND_USE_PACKAGE_REGISTRY FALSE)
 qqir_set_default(CMAKE_FIND_USE_SYSTEM_PACKAGE_REGISTRY FALSE)
 
 ### Build flags ###
-# Default to debug or released based on value of QQIR_DEBUG
+# Default to debug or released based on value of QIREE_DEBUG
 if(DEFINED CMAKE_BUILD_TYPE AND NOT CMAKE_BUILD_TYPE)
-  if(QQIR_DEBUG)
+  if(QIREE_DEBUG)
     set(_default_build_type "Debug")
   else()
     set(_default_build_type "Release")
@@ -82,28 +82,43 @@ endif()
 
 ### Installation flags ###
 # When developing add checking for proper usage of `install(`
-if(QQIR_DEBUG)
+if(QIREE_DEBUG)
   qqir_set_default(CMAKE_ERROR_ON_ABSOLUTE_INSTALL_DESTINATION ON)
 endif()
 # Avoid printing details about already installed files
 qqir_set_default(CMAKE_INSTALL_MESSAGE LAZY)
 
 #----------------------------------------------------------------------------#
-# UNUSED: Output locations for QQIR products
-set(QQIR_CMAKE_CONFIG_DIRECTORY
+# UNUSED: Output locations for QIR-EE products
+set(QIREE_CMAKE_CONFIG_DIRECTORY
   "${PROJECT_BINARY_DIR}/${CMAKE_INSTALL_LIBDIR}/cmake")
-set(QQIR_HEADER_CONFIG_DIRECTORY
+set(QIREE_HEADER_CONFIG_DIRECTORY
   "${PROJECT_BINARY_DIR}/${CMAKE_INSTALL_INCLUDEDIR}")
-set(QQIR_LIBRARY_OUTPUT_DIRECTORY
+set(QIREE_LIBRARY_OUTPUT_DIRECTORY
   "${PROJECT_BINARY_DIR}/${CMAKE_INSTALL_LIBDIR}")
-set(QQIR_RUNTIME_OUTPUT_DIRECTORY
+set(QIREE_RUNTIME_OUTPUT_DIRECTORY
   "${PROJECT_BINARY_DIR}/${CMAKE_INSTALL_BINDIR}")
 
 #----------------------------------------------------------------------------#
 # DEPENDENCIES
 #----------------------------------------------------------------------------#
 
-if(QQIR_BUILD_TESTS AND NOT GTest_FOUND)
+find_package(LLVM REQUIRED)
+if(NOT LLVM_VERSION EQUAL 16)
+  message(WARNING "QIR-EE expects LLVM version 16")
+endif()
+
+llvm_map_components_to_libnames(llvm_libs
+  Core
+  ExecutionEngine
+  Interpreter
+  MC
+  MCJIT
+  Support
+  nativecodegen
+)
+
+if(QIREE_BUILD_TESTS AND NOT GTest_FOUND)
   # TODO: download and build GTest as a subproject if not available
   find_package(GTest)
   if(NOT GTest_FOUND)
@@ -124,7 +139,7 @@ add_subdirectory(src)
 # UNIT TESTS
 #----------------------------------------------------------------------------#
 
-if(QQIR_BUILD_TESTS)
+if(QIREE_BUILD_TESTS)
   include(CTest)
   add_subdirectory(test)
 endif()
@@ -139,7 +154,7 @@ endif()
 # DOCUMENTATION
 #----------------------------------------------------------------------------#
 
-# if(QQIR_BUILD_DOCS)
+# if(QIREE_BUILD_DOCS)
 #   add_subdirectory(doc)
 # endif()
 
@@ -148,69 +163,69 @@ endif()
 #----------------------------------------------------------------------------#
 
 # Where to install configured cmake files
-set(QQIR_INSTALL_CMAKECONFIGDIR "${CMAKE_INSTALL_LIBDIR}/cmake/QQIR")
+set(QIREE_INSTALL_CMAKECONFIGDIR "${CMAKE_INSTALL_LIBDIR}/cmake/QIREE")
 
 #TODO
 
 install(FILES ${_cmake_files}
-  DESTINATION "${QQIR_INSTALL_CMAKECONFIGDIR}"
+  DESTINATION "${QIREE_INSTALL_CMAKECONFIGDIR}"
   COMPONENT development
 )
 install(DIRECTORY "${PROJECT_SOURCE_DIR}/cmake/backport"
-  DESTINATION "${QQIR_INSTALL_CMAKECONFIGDIR}"
+  DESTINATION "${QIREE_INSTALL_CMAKECONFIGDIR}"
   COMPONENT development
 )
 
-# Export all cache variables that start with QQIR_
-set(QQIR_EXPORT_VARIABLES)
+# Export all cache variables that start with QIREE_
+set(QIREE_EXPORT_VARIABLES)
 macro(qqir_export_var varname)
-  list(APPEND QQIR_EXPORT_VARIABLES "set(${varname} \"${${varname}}\")")
+  list(APPEND QIREE_EXPORT_VARIABLES "set(${varname} \"${${varname}}\")")
 endmacro()
-qqir_export_var(QQIR_VERSION_STRING)
-list(APPEND QQIR_EXPORT_VARIABLES "\n# Configuration options")
+qqir_export_var(QIREE_VERSION_STRING)
+list(APPEND QIREE_EXPORT_VARIABLES "\n# Configuration options")
 get_directory_property(_cachevar_keys CACHE_VARIABLES)
 foreach(_key IN LISTS _cachevar_keys)
-  if(_key MATCHES "^QQIR_")
+  if(_key MATCHES "^QIREE_")
     qqir_export_var(${_key})
   endif()
 endforeach()
 
 # Export defaulted variables
-list(APPEND QQIR_EXPORT_VARIABLES "\n# Defaulted variables")
-foreach(_key IN LISTS QQIR_DEFAULT_VARIABLES)
-  list(APPEND QQIR_EXPORT_VARIABLES "set(QQIR_${_key} \"${${_key}}\")")
+list(APPEND QIREE_EXPORT_VARIABLES "\n# Defaulted variables")
+foreach(_key IN LISTS QIREE_DEFAULT_VARIABLES)
+  list(APPEND QIREE_EXPORT_VARIABLES "set(QIREE_${_key} \"${${_key}}\")")
 endforeach()
 
 # Add hints for direct dependencies and indirect geant dependencies
-list(APPEND QQIR_EXPORT_VARIABLES "\n# Hints for upstream dependencies")
+list(APPEND QIREE_EXPORT_VARIABLES "\n# Hints for upstream dependencies")
 foreach(_key LLVM_DIR GTest_DIR)
   set(_val "${${_key}}")
   if(_val)
-    list(APPEND QQIR_EXPORT_VARIABLES
+    list(APPEND QIREE_EXPORT_VARIABLES
       "if(NOT DEFINED ${_key})"
       "  set(${_key} \"${_val}\")"
       "endif()"
     )
   endif()
 endforeach()
-list(JOIN QQIR_EXPORT_VARIABLES "\n" QQIR_EXPORT_VARIABLES)
+list(JOIN QIREE_EXPORT_VARIABLES "\n" QIREE_EXPORT_VARIABLES)
 
-# Generate the file needed by downstream "find_package(QQIR)"
+# Generate the file needed by downstream "find_package(QIREE)"
 configure_file(
-  "${PROJECT_SOURCE_DIR}/cmake/QQIRConfig.cmake.in"
-  "${QQIR_CMAKE_CONFIG_DIRECTORY}/QQIRConfig.cmake"
+  "${PROJECT_SOURCE_DIR}/cmake/QIREEConfig.cmake.in"
+  "${QIREE_CMAKE_CONFIG_DIRECTORY}/QIREEConfig.cmake"
   @ONLY
 )
 
 # Export version info
 # TODO for version 1.0.0: change COMPATIBILITY to MajorVersion
 write_basic_package_version_file(
-  "${QQIR_CMAKE_CONFIG_DIRECTORY}/QQIRConfigVersion.cmake"
+  "${QIREE_CMAKE_CONFIG_DIRECTORY}/QIREEConfigVersion.cmake"
   COMPATIBILITY AnyNewerVersion
 )
 
 # Install generated config files
-install(DIRECTORY "${QQIR_HEADER_CONFIG_DIRECTORY}/"
+install(DIRECTORY "${QIREE_HEADER_CONFIG_DIRECTORY}/"
   DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}"
   COMPONENT development
   FILES_MATCHING REGEX ".*\\.hh?$"
@@ -218,24 +233,24 @@ install(DIRECTORY "${QQIR_HEADER_CONFIG_DIRECTORY}/"
 
 # Install the config and version files
 install(FILES
-  "${QQIR_CMAKE_CONFIG_DIRECTORY}/QQIRConfig.cmake"
-  "${QQIR_CMAKE_CONFIG_DIRECTORY}/QQIRConfigVersion.cmake"
-  DESTINATION ${QQIR_INSTALL_CMAKECONFIGDIR}
+  "${QIREE_CMAKE_CONFIG_DIRECTORY}/QIREEConfig.cmake"
+  "${QIREE_CMAKE_CONFIG_DIRECTORY}/QIREEConfigVersion.cmake"
+  DESTINATION ${QIREE_INSTALL_CMAKECONFIGDIR}
   COMPONENT development
 )
 
-# Install 'QQIRTargets.cmake', included by QQIRConfig.cmake, which
+# Install 'QIREETargets.cmake', included by QIREEConfig.cmake, which
 # references the targets we install.
 install(EXPORT qqir-targets
-  FILE QQIRTargets.cmake
-  NAMESPACE QQIR::
-  DESTINATION "${QQIR_INSTALL_CMAKECONFIGDIR}"
+  FILE QIREETargets.cmake
+  NAMESPACE QIREE::
+  DESTINATION "${QIREE_INSTALL_CMAKECONFIGDIR}"
   COMPONENT development
 )
 
-if(QQIR_VERSION VERSION_EQUAL "0.0.0")
+if(QIREE_VERSION VERSION_EQUAL "0.0.0")
   install(CODE "
-message(WARNING \"The Queue-QIR version was not detected during configuration.
+message(WARNING \"The QIR-EE version was not detected during configuration.
   (Check the beginning of your initial configure output for more details.)
   This will result in the installation having incorrect version metadata and
   will interfere with downstream CMake version requirements and may obscure

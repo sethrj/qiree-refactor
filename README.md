@@ -1,7 +1,6 @@
-# Queue-QIR
+# QIR-EE
 
-Example of queueing up quantum instructions from QIR to offload to an
-accelerator.
+QIR execution engine interface.
 
 # Documentation
 

@@ -61,7 +61,7 @@ ForEachMacros:
 IncludeBlocks:   Regroup
 # Category 0: main include
 # Category 1: system includes
-# Category 2: celeritas absolute includes
+# Category 2: absolute includes
 # Category 5: relative includes
 # Category 7: test includes
 IncludeCategories:
@@ -71,35 +71,13 @@ IncludeCategories:
   - Regex:           '^<.+>$'
     Priority:        1
     SortPriority:    2
-  - Regex:           '^"celeritas_[a-z_]+\.h"'
+  - Regex:           '^"qiree_[a-z_]+\.h"'
     Priority:        2
     SortPriority:    3
-  - Regex:           '^"corecel/device_runtime_api\.h"$'
-    Priority:        2
-    SortPriority:    3
-  - Regex:           '^"corecel/'
-    Priority:        2
-    SortPriority:    5
-    CaseSensitive:   true
-  - Regex:           '^"orange/'
-    Priority:        2
-    SortPriority:    6
-    CaseSensitive:   true
-  - Regex:           '^"celeritas/'
-    Priority:        2
-    SortPriority:    7
-    CaseSensitive:   true
-  - Regex:           '^"accel/'
-    Priority:        2
-    SortPriority:    8
-    CaseSensitive:   true
   - Regex:           '^"[^/]+"'
     Priority:        5
     SortPriority:    9
-  - Regex:           '^"detail/"'
-    Priority:        5
-    SortPriority:    10
-  - Regex:           '"(^gtest/|TestBase|\.test\.hh|celeritas_test\.hh)'
+  - Regex:           '"(^gtest/|TestBase|\.test\.hh|qiree_test\.hh)'
     Priority:        7
     CaseSensitive:   true
     SortPriority:    11
