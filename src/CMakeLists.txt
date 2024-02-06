@@ -23,6 +23,7 @@ llvm_map_components_to_libnames(_llvm_libs
   Support
   nativecodegen
 )
+message(STATUS "${_llvm_libs}")
 
 #----------------------------------------------------------------------------#
 # LIBRARIES
@@ -30,6 +31,7 @@ llvm_map_components_to_libnames(_llvm_libs
 
 add_library(qiree
   qiree/Assert.cc
+  qiree/LlvmExecutor.cc
 )
 target_link_libraries(qiree
   PRIVATE
@@ -40,9 +42,11 @@ target_include_directories(qiree
     "$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/src>"
     "$<BUILD_INTERFACE:${QIREE_HEADER_CONFIG_DIRECTORY}>"
     "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>"
+  PRIVATE
+    "${LLVM_INCLUDE_DIRS}"
 )
 
-add_library(QIR-EE::qiree ALIAS qiree)
+add_library(QIREE::qiree ALIAS qiree)
 install(TARGETS qiree
   EXPORT qiree-targets
     ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}"
