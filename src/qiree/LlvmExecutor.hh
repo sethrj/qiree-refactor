@@ -50,7 +50,6 @@ class LlvmExecutor
     void operator()(QuantumInterface& qi, ResultInterface& ri) const;
 
   private:
-    std::unique_ptr<llvm::Module> mod_;
     llvm::Function* entrypoint_{nullptr};
     std::unique_ptr<llvm::ExecutionEngine> ee_;
     std::unique_ptr<llvm::Function> ifstmt_;

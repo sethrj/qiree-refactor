@@ -59,23 +59,25 @@ LlvmExecutor::LlvmExecutor(std::string const& filename,
     // Initialize LLVM
     llvm::InitializeNativeTarget();
     llvm::InitializeNativeTargetAsmPrinter();
+    LLVMInitializeNativeAsmParser();
+    LLVMLinkInMCJIT();
 
     // Load LLVM IR file
     llvm::SMDiagnostic err;
-    mod_ = llvm::parseIRFile(filename, err, context());
+    auto mod = llvm::parseIRFile(filename, err, context());
 
-    if (!mod_)
+    if (!mod)
     {
         err.print("qiree", llvm::errs());
-        QIREE_VALIDATE(mod_,
+        QIREE_VALIDATE(mod,
                        << "failed to read QIR input at '" << filename << "'");
     }
 
-    entrypoint_ = mod_->getFunction(entrypoint);
+    entrypoint_ = mod->getFunction(entrypoint);
     QIREE_VALIDATE(entrypoint_,
                    << "no entrypoint function '" << entrypoint << "' exists");
 
-    for (llvm::Function const& func : *mod_)
+    for (llvm::Function const& func : *mod)
     {
         if (func.empty())
         {
@@ -84,6 +86,20 @@ LlvmExecutor::LlvmExecutor(std::string const& filename,
                       << std::endl;
         }
     }
+
+    // Create execution engine by capturing the module
+    ee_ = [&mod] {
+        llvm::EngineBuilder builder{std::move(mod)};
+
+        // Pass a reference to a string for diagnosing errors
+        std::string err_str;
+        builder.setErrorStr(&err_str);
+
+        // Create the builder, or throw an exception with the failure
+        std::unique_ptr<llvm::ExecutionEngine> ee{builder.create()};
+        QIREE_VALIDATE(ee, << "failed to create execution engine: " << err_str);
+        return ee;
+    }();
 }
 
 //---------------------------------------------------------------------------//
@@ -96,6 +112,8 @@ LlvmExecutor::~LlvmExecutor() = default;
  */
 void LlvmExecutor::operator()(QuantumInterface& qi, ResultInterface& ri) const
 {
+    QIREE_EXPECT(ee_);
+
     QIREE_VALIDATE(!q_interface_ && !r_interface_,
                    << "cannot call LLVM executor recursively or in MT "
                       "environment (for now)");

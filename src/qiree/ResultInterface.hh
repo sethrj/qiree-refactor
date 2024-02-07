@@ -36,14 +36,10 @@ result_record_output(%Result* inttoptr (i64 2 to %Result*), i8* null)
 class ResultInterface
 {
   public:
-    /*!
-     * Prepare to store N results.
-     */
-    virtual void record_output(size_type);
+    //! Prepare to store N results.
+    virtual void record_output(size_type) = 0;
 
-    /*!
-     * Mark the start of an array and its size.
-     */
+    //! Mark the start of an array and its size.
     virtual void record_output(Result result, OptionalCString tag) = 0;
 
   protected:

@@ -11,6 +11,7 @@ configure_file(qiree_test_config.h.in qiree_test_config.h @ONLY)
 
 add_executable(qiree_test
   LlvmExecutor.test.cc
+  QuantumTestImpl.cc
 )
 target_link_libraries(qiree_test
   GTest::GTest GTest::gtest_main # For testing

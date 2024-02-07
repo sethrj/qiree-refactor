@@ -7,6 +7,7 @@
 //---------------------------------------------------------------------------//
 #include "qiree/LlvmExecutor.hh"
 
+#include "QuantumTestImpl.hh"
 #include "qiree_test.hh"
 
 namespace qiree
@@ -27,11 +28,34 @@ class LlvmExecutorTest : public ::testing::Test
         result += filename;
         return result;
     }
+
+    TestResult run(std::string const& filename);
 };
 
+//---------------------------------------------------------------------------//
+TestResult LlvmExecutorTest::run(std::string const& filename)
+{
+    LlvmExecutor execute(test_data_path(filename));
+
+    // Run with the test interface
+    TestResult tr;
+    QuantumTestImpl quantum_impl(&tr);
+    ResultTestImpl result_impl(&tr);
+
+    execute(quantum_impl, result_impl);
+    return tr;
+}
+
+//---------------------------------------------------------------------------//
+TEST_F(LlvmExecutorTest, minimal)
+{
+    this->run("minimal.ll");
+}
+
+//---------------------------------------------------------------------------//
 TEST_F(LlvmExecutorTest, bell)
 {
-    LlvmExecutor execute(test_data_path("bell.ll"));
+    this->run("bell.ll");
 }
 
 //---------------------------------------------------------------------------//
