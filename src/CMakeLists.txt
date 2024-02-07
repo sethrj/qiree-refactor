@@ -17,7 +17,6 @@ configure_file("qiree_config.h.in"
 llvm_map_components_to_libnames(_llvm_libs
   MCJIT
   native
-  nativecodegen
 )
 
 #----------------------------------------------------------------------------#

@@ -51,6 +51,7 @@ class LlvmExecutor
 
   private:
     llvm::Function* entrypoint_{nullptr};
+    llvm::Module* mod_{nullptr};
     std::unique_ptr<llvm::ExecutionEngine> ee_;
     std::unique_ptr<llvm::Function> ifstmt_;
 };

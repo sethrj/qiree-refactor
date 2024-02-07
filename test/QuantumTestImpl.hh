@@ -49,6 +49,10 @@ class QuantumTestImpl final : public QuantumInterface
     TestResult* tr_;
 };
 
+//---------------------------------------------------------------------------//
+/*!
+ * Implementation of the result output runtime interface.
+ */
 class ResultTestImpl final : public ResultInterface
 {
   public:

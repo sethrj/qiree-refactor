@@ -28,19 +28,28 @@ QuantumTestImpl::QuantumTestImpl(TestResult* result) : tr_{result}
 /*!
  * Measure the qubit and store in the result.
  */
-void QuantumTestImpl::mz(Qubit, Result) {}
+void QuantumTestImpl::mz(Qubit q, Result r)
+{
+    tr_->commands.push_back("mz");
+}
 
 //---------------------------------------------------------------------------//
 /*!
  * Apply the H gate to the given qubit.
  */
-void QuantumTestImpl::h(Qubit) {}
+void QuantumTestImpl::h(Qubit)
+{
+    tr_->commands.push_back("h");
+}
 
 //---------------------------------------------------------------------------//
 /*!
  * Apply the CNOT gate to the given qubits.
  */
-void QuantumTestImpl::cnot(Qubit, Qubit) {}
+void QuantumTestImpl::cnot(Qubit, Qubit)
+{
+    tr_->commands.push_back("cnot");
+}
 
 //---------------------------------------------------------------------------//
 /*!
