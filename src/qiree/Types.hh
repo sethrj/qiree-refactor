@@ -8,10 +8,18 @@
 #pragma once
 
 #include <cstdint>
+#include <string>
 #include <type_traits>
 
 namespace qiree
 {
+//---------------------------------------------------------------------------//
+//! Unsigned integer used for QIR
+using size_type = std::uint64_t;
+
+//! Integer used for Pauli type
+using pauli_type = std::int_least8_t;
+
 //---------------------------------------------------------------------------//
 /*!
  * A type-safe wrapper class for managing "pointers".
@@ -27,7 +35,34 @@ namespace qiree
 template<class T>
 struct OpaqueId
 {
-    std::uint64_t value{0};
+    size_type value{0};
+};
+
+//---------------------------------------------------------------------------//
+/*!
+ * Entry point attributes.
+ *
+ * See
+ * https://github.com/qir-alliance/qir-spec/blob/main/specification/under_development/profiles/Base_Profile.md#attributes
+ */
+struct EntryPointAttrs
+{
+    size_type required_num_qubits{};
+    size_type required_num_results{};
+    std::string output_labeling_schema;
+    std::string qir_profiles;
+};
+
+//---------------------------------------------------------------------------//
+/*!
+ * Flags describing the QIR version of a loaded module.
+ */
+struct ModuleFlags
+{
+    std::int32_t qir_major_version{};
+    std::int32_t qir_minor_version{};
+    bool dynamic_qubit_management{};
+    bool dynamic_result_management{};
 };
 
 //---------------------------------------------------------------------------//
@@ -42,32 +77,27 @@ enum class QState : bool
     one //!< State is |1>
 };
 
-//---------------------------------------------------------------------------//
-/*!
- * Specalization of a "callable" function.
- *
- * This is the suffix for QIR LLVM function declarations.
- */
-enum class CallableSpecialization
+//! Pauli basis
+enum class Pauli : pauli_type
 {
-    body, //!< Base
-    adj, //!< Adjoint
-    ctl, //!< Controlled
-    ctladj, //!< Controlled adjoint
+    i = 0,
+    x = 1,
+    z = 2,
+    y = 3,
 };
 
 //---------------------------------------------------------------------------//
 // TYPE ALIASES
 //---------------------------------------------------------------------------//
 
-//! Integer size used for QIR
-using size_type = std::uint64_t;
-
 //! Opaque QIR array identifier
 using Array = OpaqueId<struct Array_>;
 
 //! Opaque QIR result identifier
 using Result = OpaqueId<struct Result_>;
+
+//! Opaque QIR string identifier
+using String = OpaqueId<struct String_>;
 
 //! Opaque QIR tuple identifier
 using Tuple = OpaqueId<struct Tuple_>;
@@ -77,18 +107,6 @@ using Qubit = OpaqueId<struct Qubit_>;
 
 //! Pointer to a C string that may be null
 using OptionalCString = char const*;
-
-//! Tag dispatch class for a callable
-template <CallableSpecialization CS>
-using CallableTag = std::integral_constant<CallableSpecialization, CS>;
-
-//!@{
-//! \name Callable specialization tags
-using BodyTag = CallableTag<CallableSpecialization::body>;
-using AdjTag = CallableTag<CallableSpecialization::adj>;
-using CtlTag = CallableTag<CallableSpecialization::ctl>;
-using CtlAdjTag = CallableTag<CallableSpecialization::ctladj>;
-//!@}
 
 //---------------------------------------------------------------------------//
 }  // namespace qiree
