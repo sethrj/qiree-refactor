@@ -16,10 +16,11 @@ namespace qiree
  * Interface class for the \c rt (runtime) namespace for storing results.
  *
  * \code
+   void @__quantum__rt__array_record_output(i64, i8*)
+   void @__quantum__rt__result_record_output(%Result*, i8*)
    ; bool @__quantum__rt__result_equal(%Result*, %Result*)
    ; %Result* @__quantum__rt__result_get_one()
    ; %Result* @__quantum__rt__result_get_zero()
-   void @__quantum__rt__result_record_output(%Result*, i8*)
    ; %String* @__quantum__rt__result_to_string(%Result*)
    ; void @__quantum__rt__result_update_reference_count(%Result*, i32)
  * \endcode
