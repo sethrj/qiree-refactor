@@ -48,30 +48,230 @@ static ResultInterface* r_interface_{nullptr};
 /*!
  * QIR function wrappers.
  *
- * NOTE: QIR "opaque pointers" are represented in LLVM IR as pointer types
- * (i.e. they're \c sizeof(void*) ) but our interfaces represent them as opaque
- * wrappers.
+ * \note These are generated from scripts/dev/generate-bindings.py .
  */
-void QIREE_QIS_FUNCTION(mz, body)(std::uintptr_t q, std::uintptr_t r)
+//---------------------------------------------------------------------------//
+// MEASUREMENTS
+//---------------------------------------------------------------------------//
+std::uintptr_t QIREE_QIS_FUNCTION(m, body)(std::uintptr_t arg1)
 {
-    return q_interface_->mz(Qubit{q}, Result{r});
+    return q_interface_->m(Qubit{arg1}).value;
+}
+std::uintptr_t
+QIREE_QIS_FUNCTION(measure, body)(std::uintptr_t arg1, std::uintptr_t arg2)
+{
+    return q_interface_->measure(Array{arg1}, Array{arg2}).value;
+}
+std::uintptr_t QIREE_QIS_FUNCTION(mresetz, body)(std::uintptr_t arg1)
+{
+    return q_interface_->mresetz(Qubit{arg1}).value;
+}
+void QIREE_QIS_FUNCTION(mz, body)(std::uintptr_t arg1, std::uintptr_t arg2)
+{
+    return q_interface_->mz(Qubit{arg1}, Result{arg2});
+}
+bool QIREE_QIS_FUNCTION(read_result, body)(std::uintptr_t arg1)
+{
+    return static_cast<bool>(q_interface_->read_result(Result{arg1}));
+}
+//---------------------------------------------------------------------------//
+// GATES
+//---------------------------------------------------------------------------//
+void QIREE_QIS_FUNCTION(ccx, body)(std::uintptr_t arg1, std::uintptr_t arg2)
+{
+    return q_interface_->ccx(Qubit{arg1}, Qubit{arg2});
+}
+void QIREE_QIS_FUNCTION(cnot, body)(std::uintptr_t arg1, std::uintptr_t arg2)
+{
+    return q_interface_->cnot(Qubit{arg1}, Qubit{arg2});
+}
+void QIREE_QIS_FUNCTION(cx, body)(std::uintptr_t arg1, std::uintptr_t arg2)
+{
+    return q_interface_->cx(Qubit{arg1}, Qubit{arg2});
+}
+void QIREE_QIS_FUNCTION(cy, body)(std::uintptr_t arg1, std::uintptr_t arg2)
+{
+    return q_interface_->cy(Qubit{arg1}, Qubit{arg2});
+}
+void QIREE_QIS_FUNCTION(cz, body)(std::uintptr_t arg1, std::uintptr_t arg2)
+{
+    return q_interface_->cz(Qubit{arg1}, Qubit{arg2});
+}
+void QIREE_QIS_FUNCTION(exp, adj)(std::uintptr_t arg1,
+                                  double arg2,
+                                  std::uintptr_t arg3)
+{
+    return q_interface_->exp_adj(Array{arg1}, arg2, Array{arg3});
+}
+void QIREE_QIS_FUNCTION(exp, body)(std::uintptr_t arg1,
+                                   double arg2,
+                                   std::uintptr_t arg3)
+{
+    return q_interface_->exp(Array{arg1}, arg2, Array{arg3});
+}
+void QIREE_QIS_FUNCTION(exp, ctl)(std::uintptr_t arg1, std::uintptr_t arg2)
+{
+    return q_interface_->exp(Array{arg1}, Tuple{arg2});
+}
+void QIREE_QIS_FUNCTION(exp, ctladj)(std::uintptr_t arg1, std::uintptr_t arg2)
+{
+    return q_interface_->exp_adj(Array{arg1}, Tuple{arg2});
+}
+void QIREE_QIS_FUNCTION(h, body)(std::uintptr_t arg1)
+{
+    return q_interface_->h(Qubit{arg1});
+}
+void QIREE_QIS_FUNCTION(h, ctl)(std::uintptr_t arg1, std::uintptr_t arg2)
+{
+    return q_interface_->h(Array{arg1}, Qubit{arg2});
+}
+void QIREE_QIS_FUNCTION(r,
+                        adj)(pauli_type arg1, double arg2, std::uintptr_t arg3)
+{
+    return q_interface_->r_adj(static_cast<Pauli>(arg1), arg2, Qubit{arg3});
+}
+void QIREE_QIS_FUNCTION(r,
+                        body)(pauli_type arg1, double arg2, std::uintptr_t arg3)
+{
+    return q_interface_->r(static_cast<Pauli>(arg1), arg2, Qubit{arg3});
+}
+void QIREE_QIS_FUNCTION(r, ctl)(std::uintptr_t arg1, std::uintptr_t arg2)
+{
+    return q_interface_->r(Array{arg1}, Tuple{arg2});
+}
+void QIREE_QIS_FUNCTION(r, ctladj)(std::uintptr_t arg1, std::uintptr_t arg2)
+{
+    return q_interface_->r_adj(Array{arg1}, Tuple{arg2});
+}
+void QIREE_QIS_FUNCTION(reset, body)(std::uintptr_t arg1)
+{
+    return q_interface_->reset(Qubit{arg1});
+}
+void QIREE_QIS_FUNCTION(rx, body)(double arg1, std::uintptr_t arg2)
+{
+    return q_interface_->rx(arg1, Qubit{arg2});
+}
+void QIREE_QIS_FUNCTION(rx, ctl)(std::uintptr_t arg1, std::uintptr_t arg2)
+{
+    return q_interface_->rx(Array{arg1}, Tuple{arg2});
+}
+void QIREE_QIS_FUNCTION(rxx, body)(double arg1,
+                                   std::uintptr_t arg2,
+                                   std::uintptr_t arg3)
+{
+    return q_interface_->rxx(arg1, Qubit{arg2}, Qubit{arg3});
+}
+void QIREE_QIS_FUNCTION(ry, body)(double arg1, std::uintptr_t arg2)
+{
+    return q_interface_->ry(arg1, Qubit{arg2});
+}
+void QIREE_QIS_FUNCTION(ry, ctl)(std::uintptr_t arg1, std::uintptr_t arg2)
+{
+    return q_interface_->ry(Array{arg1}, Tuple{arg2});
+}
+void QIREE_QIS_FUNCTION(ryy, body)(double arg1,
+                                   std::uintptr_t arg2,
+                                   std::uintptr_t arg3)
+{
+    return q_interface_->ryy(arg1, Qubit{arg2}, Qubit{arg3});
+}
+void QIREE_QIS_FUNCTION(rz, body)(double arg1, std::uintptr_t arg2)
+{
+    return q_interface_->rz(arg1, Qubit{arg2});
+}
+void QIREE_QIS_FUNCTION(rz, ctl)(std::uintptr_t arg1, std::uintptr_t arg2)
+{
+    return q_interface_->rz(Array{arg1}, Tuple{arg2});
+}
+void QIREE_QIS_FUNCTION(rzz, body)(double arg1,
+                                   std::uintptr_t arg2,
+                                   std::uintptr_t arg3)
+{
+    return q_interface_->rzz(arg1, Qubit{arg2}, Qubit{arg3});
+}
+void QIREE_QIS_FUNCTION(s, adj)(std::uintptr_t arg1)
+{
+    return q_interface_->s_adj(Qubit{arg1});
+}
+void QIREE_QIS_FUNCTION(s, body)(std::uintptr_t arg1)
+{
+    return q_interface_->s(Qubit{arg1});
+}
+void QIREE_QIS_FUNCTION(s, ctl)(std::uintptr_t arg1, std::uintptr_t arg2)
+{
+    return q_interface_->s(Array{arg1}, Qubit{arg2});
+}
+void QIREE_QIS_FUNCTION(s, ctladj)(std::uintptr_t arg1, std::uintptr_t arg2)
+{
+    return q_interface_->s_adj(Array{arg1}, Qubit{arg2});
+}
+void QIREE_QIS_FUNCTION(swap, body)(std::uintptr_t arg1, std::uintptr_t arg2)
+{
+    return q_interface_->swap(Qubit{arg1}, Qubit{arg2});
+}
+void QIREE_QIS_FUNCTION(t, adj)(std::uintptr_t arg1)
+{
+    return q_interface_->t_adj(Qubit{arg1});
+}
+void QIREE_QIS_FUNCTION(t, body)(std::uintptr_t arg1)
+{
+    return q_interface_->t(Qubit{arg1});
+}
+void QIREE_QIS_FUNCTION(t, ctl)(std::uintptr_t arg1, std::uintptr_t arg2)
+{
+    return q_interface_->t(Array{arg1}, Qubit{arg2});
+}
+void QIREE_QIS_FUNCTION(t, ctladj)(std::uintptr_t arg1, std::uintptr_t arg2)
+{
+    return q_interface_->t_adj(Array{arg1}, Qubit{arg2});
+}
+void QIREE_QIS_FUNCTION(x, body)(std::uintptr_t arg1)
+{
+    return q_interface_->x(Qubit{arg1});
+}
+void QIREE_QIS_FUNCTION(x, ctl)(std::uintptr_t arg1, std::uintptr_t arg2)
+{
+    return q_interface_->x(Array{arg1}, Qubit{arg2});
+}
+void QIREE_QIS_FUNCTION(y, body)(std::uintptr_t arg1)
+{
+    return q_interface_->y(Qubit{arg1});
+}
+void QIREE_QIS_FUNCTION(y, ctl)(std::uintptr_t arg1, std::uintptr_t arg2)
+{
+    return q_interface_->y(Array{arg1}, Qubit{arg2});
+}
+void QIREE_QIS_FUNCTION(z, body)(std::uintptr_t arg1)
+{
+    return q_interface_->z(Qubit{arg1});
+}
+void QIREE_QIS_FUNCTION(z, ctl)(std::uintptr_t arg1, std::uintptr_t arg2)
+{
+    return q_interface_->z(Array{arg1}, Qubit{arg2});
+}
+//---------------------------------------------------------------------------//
+// ASSERTIONS
+//---------------------------------------------------------------------------//
+void QIREE_QIS_FUNCTION(assertmeasurementprobability,
+                        body)(std::uintptr_t arg1,
+                              std::uintptr_t arg2,
+                              std::uintptr_t arg3,
+                              double arg4,
+                              std::uintptr_t arg5,
+                              double arg6)
+{
+    return q_interface_->assertmeasurementprobability(
+        Array{arg1}, Array{arg2}, Result{arg3}, arg4, String{arg5}, arg6);
+}
+void QIREE_QIS_FUNCTION(assertmeasurementprobability, ctl)(std::uintptr_t arg1,
+                                                           std::uintptr_t arg2)
+{
+    return q_interface_->assertmeasurementprobability(Array{arg1}, Tuple{arg2});
 }
 
-void QIREE_QIS_FUNCTION(h, body)(std::uintptr_t q)
-{
-    return q_interface_->h(Qubit{q});
-}
-
-void QIREE_QIS_FUNCTION(cnot, body)(std::uintptr_t q1, std::uintptr_t q2)
-{
-    return q_interface_->cnot(Qubit{q1}, Qubit{q2});
-}
-
-bool QIREE_QIS_FUNCTION(read_result, body)(std::uintptr_t r)
-{
-    return static_cast<bool>(q_interface_->read_result(Result{r}));
-}
-
+//---------------------------------------------------------------------------//
+// RUNTIME
+//---------------------------------------------------------------------------//
 void QIREE_RT_FUNCTION(array_record_output)(size_type s)
 {
     return r_interface_->record_output(s);
@@ -83,6 +283,7 @@ void QIREE_RT_FUNCTION(result_record_output)(std::uintptr_t r,
     return r_interface_->record_output(Result{r}, tag);
 }
 
+//!@}
 //---------------------------------------------------------------------------//
 }  // namespace
 
@@ -130,10 +331,57 @@ Executor::Executor(Module&& module)
 #define QIREE_BIND_QIS_FUNCTION(FUNC, SUFFIX)            \
     bind_function("__quantum__qis__" #FUNC "__" #SUFFIX, \
                   QIREE_QIS_FUNCTION(FUNC, SUFFIX))
+    // Measurements
+    QIREE_BIND_QIS_FUNCTION(m, body);
+    QIREE_BIND_QIS_FUNCTION(measure, body);
+    QIREE_BIND_QIS_FUNCTION(mresetz, body);
     QIREE_BIND_QIS_FUNCTION(mz, body);
-    QIREE_BIND_QIS_FUNCTION(h, body);
-    QIREE_BIND_QIS_FUNCTION(cnot, body);
     QIREE_BIND_QIS_FUNCTION(read_result, body);
+    // Gates
+    QIREE_BIND_QIS_FUNCTION(ccx, body);
+    QIREE_BIND_QIS_FUNCTION(cnot, body);
+    QIREE_BIND_QIS_FUNCTION(cx, body);
+    QIREE_BIND_QIS_FUNCTION(cy, body);
+    QIREE_BIND_QIS_FUNCTION(cz, body);
+    QIREE_BIND_QIS_FUNCTION(exp, adj);
+    QIREE_BIND_QIS_FUNCTION(exp, body);
+    QIREE_BIND_QIS_FUNCTION(exp, ctl);
+    QIREE_BIND_QIS_FUNCTION(exp, ctladj);
+    QIREE_BIND_QIS_FUNCTION(h, body);
+    QIREE_BIND_QIS_FUNCTION(h, ctl);
+    QIREE_BIND_QIS_FUNCTION(r, adj);
+    QIREE_BIND_QIS_FUNCTION(r, body);
+    QIREE_BIND_QIS_FUNCTION(r, ctl);
+    QIREE_BIND_QIS_FUNCTION(r, ctladj);
+    QIREE_BIND_QIS_FUNCTION(reset, body);
+    QIREE_BIND_QIS_FUNCTION(rx, body);
+    QIREE_BIND_QIS_FUNCTION(rx, ctl);
+    QIREE_BIND_QIS_FUNCTION(rxx, body);
+    QIREE_BIND_QIS_FUNCTION(ry, body);
+    QIREE_BIND_QIS_FUNCTION(ry, ctl);
+    QIREE_BIND_QIS_FUNCTION(ryy, body);
+    QIREE_BIND_QIS_FUNCTION(rz, body);
+    QIREE_BIND_QIS_FUNCTION(rz, ctl);
+    QIREE_BIND_QIS_FUNCTION(rzz, body);
+    QIREE_BIND_QIS_FUNCTION(s, adj);
+    QIREE_BIND_QIS_FUNCTION(s, body);
+    QIREE_BIND_QIS_FUNCTION(s, ctl);
+    QIREE_BIND_QIS_FUNCTION(s, ctladj);
+    QIREE_BIND_QIS_FUNCTION(swap, body);
+    QIREE_BIND_QIS_FUNCTION(t, adj);
+    QIREE_BIND_QIS_FUNCTION(t, body);
+    QIREE_BIND_QIS_FUNCTION(t, ctl);
+    QIREE_BIND_QIS_FUNCTION(t, ctladj);
+    QIREE_BIND_QIS_FUNCTION(x, body);
+    QIREE_BIND_QIS_FUNCTION(x, ctl);
+    QIREE_BIND_QIS_FUNCTION(y, body);
+    QIREE_BIND_QIS_FUNCTION(y, ctl);
+    QIREE_BIND_QIS_FUNCTION(z, body);
+    QIREE_BIND_QIS_FUNCTION(z, ctl);
+    // Assertions
+    QIREE_BIND_QIS_FUNCTION(assertmeasurementprobability, body);
+    QIREE_BIND_QIS_FUNCTION(assertmeasurementprobability, ctl);
+
     QIREE_BIND_RT_FUNCTION(array_record_output);
     QIREE_BIND_RT_FUNCTION(result_record_output);
 #undef QIREE_BIND_RT_FUNCTION

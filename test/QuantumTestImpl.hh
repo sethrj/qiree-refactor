@@ -10,7 +10,7 @@
 #include <string>
 #include <vector>
 
-#include "qiree/QuantumInterface.hh"
+#include "qiree/QuantumNotImpl.hh"
 #include "qiree/ResultInterface.hh"
 
 namespace qiree
@@ -27,7 +27,7 @@ struct TestResult
 /*!
  * Implementation of the quantum interface.
  */
-class QuantumTestImpl final : public QuantumInterface
+class QuantumTestImpl final : public QuantumNotImpl
 {
   public:
     // Construct with pointer to modifiable test result

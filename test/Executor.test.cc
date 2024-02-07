@@ -52,5 +52,11 @@ TEST_F(ExecutorTest, bell)
 }
 
 //---------------------------------------------------------------------------//
+TEST_F(ExecutorTest, several_gates)
+{
+    this->run("pyqir_several_gates.ll");
+}
+
+//---------------------------------------------------------------------------//
 }  // namespace test
 }  // namespace qiree

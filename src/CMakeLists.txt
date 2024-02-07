@@ -27,6 +27,7 @@ add_library(qiree
   qiree/Assert.cc
   qiree/Module.cc
   qiree/Executor.cc
+  qiree/QuantumNotImpl.cc
 )
 target_link_libraries(qiree
   PRIVATE

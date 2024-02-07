@@ -25,15 +25,15 @@ target_include_directories(qiree_test_lib
 # MACROS
 #---------------------------------------------------------------------------##
 function(qiree_add_test name)
-  add_executable(${name}_test
+  add_executable(${name}Test
     ${name}.test.cc
   )
-  target_link_libraries(${name}_test
+  target_link_libraries(${name}Test
     QIREE::qiree
     qiree_test_lib
     GTest::gtest_main
   )
-  add_test(NAME test/${name} COMMAND "$<TARGET_FILE:${name}_test>")
+  add_test(NAME test/${name} COMMAND "$<TARGET_FILE:${name}Test>")
 endfunction()
 
 #---------------------------------------------------------------------------##

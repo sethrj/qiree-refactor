@@ -22,16 +22,22 @@ namespace qiree
  * An instance of this class should be stateful (i.e. set up, store, and
  * measure the quantum circuit).
  *
+ * These are mapped to QIR functions:
  * \code
-    ; Measurements
     void @__quantum__qis__mz__body(%Qubit*, %Result*)
     bool @__quantum__qis__read_result__body(%Result*)
-
-    ; Gates
-    void @__quantum__qis__cnot__body(%Qubit*, %Qubit*)
-    void @__quantum__qis__h__body(%Qubit*)
-
+    void @__quantum__qis__r__ctl(%Array*, %Tuple*)
+    void @__quantum__qis__r__adj(i2, double, %Qubit*)
  * \endcode
+ * are represented in this interface as
+ * \code
+    void mz(Qubit, Result);
+    QState read_result(Result);
+    void r(Array, Tuple);  //!< ctl
+    void r_adj(Pauli, double, Qubit);  //!< adj
+ * \endcode
+ *
+ * \note These are generated from scripts/dev/generate-bindings.py .
  */
 class QuantumInterface
 {
@@ -39,20 +45,66 @@ class QuantumInterface
     //@{
     //! \name Measurements
 
-    //! Read the value of a result.
-    virtual QState read_result(Result) = 0;
+    virtual Result m(Qubit) = 0;  //!< body
+    virtual Result measure(Array, Array) = 0;  //!< body
+    virtual Result mresetz(Qubit) = 0;  //!< body
+    virtual void mz(Qubit, Result) = 0;  //!< body
+    virtual QState read_result(Result) = 0;  //!< body
 
-    //! Measure the qubit and store in the result.
-    virtual void mz(Qubit, Result) = 0;
     //@}
     //@{
     //! \name Gates
 
-    //! Apply the H gate to the given qubit.
-    virtual void h(Qubit) = 0;
+    virtual void ccx(Qubit, Qubit) = 0;  //!< body
+    virtual void cnot(Qubit, Qubit) = 0;  //!< body
+    virtual void cx(Qubit, Qubit) = 0;  //!< body
+    virtual void cy(Qubit, Qubit) = 0;  //!< body
+    virtual void cz(Qubit, Qubit) = 0;  //!< body
+    virtual void exp_adj(Array, double, Array) = 0;  //!< adj
+    virtual void exp(Array, double, Array) = 0;  //!< body
+    virtual void exp(Array, Tuple) = 0;  //!< ctl
+    virtual void exp_adj(Array, Tuple) = 0;  //!< ctladj
+    virtual void h(Qubit) = 0;  //!< body
+    virtual void h(Array, Qubit) = 0;  //!< ctl
+    virtual void r_adj(Pauli, double, Qubit) = 0;  //!< adj
+    virtual void r(Pauli, double, Qubit) = 0;  //!< body
+    virtual void r(Array, Tuple) = 0;  //!< ctl
+    virtual void r_adj(Array, Tuple) = 0;  //!< ctladj
+    virtual void reset(Qubit) = 0;  //!< body
+    virtual void rx(double, Qubit) = 0;  //!< body
+    virtual void rx(Array, Tuple) = 0;  //!< ctl
+    virtual void rxx(double, Qubit, Qubit) = 0;  //!< body
+    virtual void ry(double, Qubit) = 0;  //!< body
+    virtual void ry(Array, Tuple) = 0;  //!< ctl
+    virtual void ryy(double, Qubit, Qubit) = 0;  //!< body
+    virtual void rz(double, Qubit) = 0;  //!< body
+    virtual void rz(Array, Tuple) = 0;  //!< ctl
+    virtual void rzz(double, Qubit, Qubit) = 0;  //!< body
+    virtual void s_adj(Qubit) = 0;  //!< adj
+    virtual void s(Qubit) = 0;  //!< body
+    virtual void s(Array, Qubit) = 0;  //!< ctl
+    virtual void s_adj(Array, Qubit) = 0;  //!< ctladj
+    virtual void swap(Qubit, Qubit) = 0;  //!< body
+    virtual void t_adj(Qubit) = 0;  //!< adj
+    virtual void t(Qubit) = 0;  //!< body
+    virtual void t(Array, Qubit) = 0;  //!< ctl
+    virtual void t_adj(Array, Qubit) = 0;  //!< ctladj
+    virtual void x(Qubit) = 0;  //!< body
+    virtual void x(Array, Qubit) = 0;  //!< ctl
+    virtual void y(Qubit) = 0;  //!< body
+    virtual void y(Array, Qubit) = 0;  //!< ctl
+    virtual void z(Qubit) = 0;  //!< body
+    virtual void z(Array, Qubit) = 0;  //!< ctl
 
-    //! Apply the CNOT gate to the given qubits.
-    virtual void cnot(Qubit, Qubit) = 0;
+    //@}
+    //@{
+    //! \name Assertions
+
+    virtual void
+    assertmeasurementprobability(Array, Array, Result, double, String, double)
+        = 0;  //!< body
+    virtual void assertmeasurementprobability(Array, Tuple) = 0;  //!< ctl
+
     //@}
 
   protected:

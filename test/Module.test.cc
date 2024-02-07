@@ -34,7 +34,14 @@ TEST_F(ModuleTest, minimal)
     EXPECT_TRUE(other);
 }
 
-//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------/
+TEST_F(ModuleTest, multiple)
+{
+    Module m(this->test_data_path("multiple.ll"));
+    EXPECT_TRUE(m);
+}
+
+//---------------------------------------------------------------------------/
 TEST_F(ModuleTest, bell)
 {
     Module m(this->test_data_path("bell.ll"));
