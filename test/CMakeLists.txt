@@ -20,5 +20,6 @@ target_link_libraries(qiree_test
 target_include_directories(qiree_test
   PUBLIC "${PROJECT_BINARY_DIR}/test"
 )
+add_test(NAME qiree_test COMMAND "$<TARGET_FILE:qiree_test>")
 
 #---------------------------------------------------------------------------##
