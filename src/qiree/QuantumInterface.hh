@@ -13,7 +13,8 @@ namespace qiree
 {
 //---------------------------------------------------------------------------//
 /*!
- * Interface class for quantum operations in the \c qis (quantum) namespace.
+ * Interface class for quantum instruction set in the \c qis (quantum)
+ namespace.
  *
  * This class should subsume all known Quantum Instruction Set (QIS)
  * definitions. The QIR specification does not explicitly list these operations

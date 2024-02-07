@@ -3,7 +3,7 @@
 // See the top-level COPYRIGHT file for details.
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 //---------------------------------------------------------------------------//
-//! \file qiree/LlvmExecutor.hh
+//! \file qiree/Executor.hh
 //---------------------------------------------------------------------------//
 #pragma once
 
@@ -22,38 +22,32 @@ class Function;
 namespace qiree
 {
 //---------------------------------------------------------------------------//
+class Module;
 class QuantumInterface;
 class ResultInterface;
 
 //---------------------------------------------------------------------------//
 /*!
- * Load a QIR file into an LLVM execution engine and run it.
+ * Set up and run an LLVM Execution Engine that wraps QIR.
  */
-class LlvmExecutor
+class Executor
 {
   public:
     // Construct with a QIR input filename and function name
-    LlvmExecutor(std::string const& filename, std::string const& entrypoint);
-
-    //! Construct with a QIR input filename to run "main" from
-    explicit LlvmExecutor(std::string const& filename)
-        : LlvmExecutor{filename, "main"}
-    {
-    }
+    explicit Executor(Module&& module);
 
     // Default destructor
-    ~LlvmExecutor();
+    ~Executor();
 
-    QIREE_DELETE_COPY_MOVE(LlvmExecutor);
+    QIREE_DELETE_COPY_MOVE(Executor);
 
     // Execute with the given interface functions
     void operator()(QuantumInterface& qi, ResultInterface& ri) const;
 
   private:
     llvm::Function* entrypoint_{nullptr};
-    llvm::Module* mod_{nullptr};
+    llvm::Module* module_{nullptr};
     std::unique_ptr<llvm::ExecutionEngine> ee_;
-    std::unique_ptr<llvm::Function> ifstmt_;
 };
 
 //---------------------------------------------------------------------------//

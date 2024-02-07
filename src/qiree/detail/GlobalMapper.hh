@@ -41,6 +41,7 @@ class GlobalMapper
             return;
         }
         this->check_func(*irfunc);
+        // TODO: also add traits-based checking for function signature
 
         return ee_->addGlobalMapping(irfunc, reinterpret_cast<void*>(func));
     }

@@ -3,11 +3,12 @@
 // See the top-level COPYRIGHT file for details.
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 //---------------------------------------------------------------------------//
-//! \file LlvmExecutor.test.cc
+//! \file Executor.test.cc
 //---------------------------------------------------------------------------//
-#include "qiree/LlvmExecutor.hh"
+#include "qiree/Executor.hh"
 
 #include "QuantumTestImpl.hh"
+#include "qiree/Module.hh"
 #include "qiree_test.hh"
 
 namespace qiree
@@ -16,26 +17,18 @@ namespace test
 {
 //---------------------------------------------------------------------------//
 
-class LlvmExecutorTest : public ::testing::Test
+class ExecutorTest : public ::qiree::test::Test
 {
   protected:
     void SetUp() override {}
-
-    static std::string test_data_path(std::string const& filename)
-    {
-        std::string result = qiree_source_dir;
-        result += "/test/data/";
-        result += filename;
-        return result;
-    }
 
     TestResult run(std::string const& filename);
 };
 
 //---------------------------------------------------------------------------//
-TestResult LlvmExecutorTest::run(std::string const& filename)
+TestResult ExecutorTest::run(std::string const& filename)
 {
-    LlvmExecutor execute(test_data_path(filename));
+    Executor execute(Module(this->test_data_path(filename)));
 
     // Run with the test interface
     TestResult tr;
@@ -47,13 +40,13 @@ TestResult LlvmExecutorTest::run(std::string const& filename)
 }
 
 //---------------------------------------------------------------------------//
-TEST_F(LlvmExecutorTest, minimal)
+TEST_F(ExecutorTest, minimal)
 {
     this->run("minimal.ll");
 }
 
 //---------------------------------------------------------------------------//
-TEST_F(LlvmExecutorTest, bell)
+TEST_F(ExecutorTest, bell)
 {
     this->run("bell.ll");
 }

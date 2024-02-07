@@ -6,8 +6,7 @@ entry:
   ret void
 }
 
-attributes #0 = { "entry_point" "num_required_qubits"="0" "num_required_results"="0" "output_labeling_schema" "qir_profiles"="custom" }
-attributes #1 = { "irreversible" }
+attributes #0 = { "entry_point" "required_num_qubits"="0" "required_num_results"="0" "output_labeling_schema" "qir_profiles"="custom" }
 
 !llvm.module.flags = !{!0, !1, !2, !3}
 

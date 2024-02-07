@@ -7,9 +7,9 @@
 //---------------------------------------------------------------------------//
 #pragma once
 
-#include <gtest/gtest.h>
+#include <iostream>
 
-#include "qiree_test_config.h"
+#include "Test.hh"
 
 using std::cout;
 using std::endl;

@@ -25,7 +25,8 @@ llvm_map_components_to_libnames(_llvm_libs
 
 add_library(qiree
   qiree/Assert.cc
-  qiree/LlvmExecutor.cc
+  qiree/Module.cc
+  qiree/Executor.cc
 )
 target_link_libraries(qiree
   PRIVATE

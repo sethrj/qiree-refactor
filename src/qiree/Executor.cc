@@ -3,20 +3,20 @@
 // See the top-level COPYRIGHT file for details.
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 //---------------------------------------------------------------------------//
-//! \file qiree/LlvmExecutor.cc
+//! \file qiree/Executor.cc
 //---------------------------------------------------------------------------//
-#include "LlvmExecutor.hh"
+#include "Executor.hh"
 
 #include <iostream>
 #include <llvm/ExecutionEngine/ExecutionEngine.h>
 #include <llvm/ExecutionEngine/GenericValue.h>
 #include <llvm/IR/Function.h>
 #include <llvm/IR/Module.h>
-#include <llvm/IRReader/IRReader.h>
 #include <llvm/Support/SourceMgr.h>
 #include <llvm/Support/TargetSelect.h>
 
 #include "Assert.hh"
+#include "Module.hh"
 #include "QuantumInterface.hh"
 #include "ResultInterface.hh"
 #include "detail/EndGuard.hh"
@@ -26,18 +26,6 @@ namespace qiree
 {
 namespace
 {
-//---------------------------------------------------------------------------//
-/*!
- * Shared, thread-local LLVM context.
- *
- * This must exxceed the lifetime of any IR, modules, etc.
- */
-llvm::LLVMContext& context()
-{
-    static llvm::LLVMContext ctx;
-    return ctx;
-}
-
 //---------------------------------------------------------------------------//
 /*!
  * Pointer to active interfaces.
@@ -102,34 +90,20 @@ void QIREE_RT_FUNCTION(result_record_output)(std::uintptr_t r,
 /*!
  * Construct with a QIR input filename.
  */
-LlvmExecutor::LlvmExecutor(std::string const& filename,
-                           std::string const& entrypoint)
+Executor::Executor(Module&& module)
+    : entrypoint_{module.entrypoint_}, module_{module.module_.get()}
 {
+    QIREE_EXPECT(module);
+    QIREE_EXPECT(entrypoint_ && module_);
+
     // Initialize LLVM
     llvm::InitializeNativeTarget();
     llvm::InitializeNativeTargetAsmPrinter();
-    LLVMInitializeNativeAsmParser();
     LLVMLinkInMCJIT();
 
-    // Load LLVM IR file
-    llvm::SMDiagnostic err;
-    auto temp_mod = llvm::parseIRFile(filename, err, context());
-    mod_ = temp_mod.get();
-
-    if (!mod_)
-    {
-        err.print("qiree", llvm::errs());
-        QIREE_VALIDATE(mod_,
-                       << "failed to read QIR input at '" << filename << "'");
-    }
-
-    entrypoint_ = mod_->getFunction(entrypoint);
-    QIREE_VALIDATE(entrypoint_,
-                   << "no entrypoint function '" << entrypoint << "' exists");
-
     // Create execution engine by capturing the module
-    ee_ = [&temp_mod] {
-        llvm::EngineBuilder builder{std::move(temp_mod)};
+    ee_ = [&module] {
+        llvm::EngineBuilder builder{std::move(module.module_)};
 
         // Pass a reference to a string for diagnosing errors
         std::string err_str;
@@ -150,7 +124,7 @@ LlvmExecutor::LlvmExecutor(std::string const& filename,
     });
 
     // Bind functions if available
-    detail::GlobalMapper bind_function(*mod_, ee_.get());
+    detail::GlobalMapper bind_function(*module_, ee_.get());
 #define QIREE_BIND_RT_FUNCTION(FUNC) \
     bind_function("__quantum__rt__" #FUNC, QIREE_RT_FUNCTION(FUNC))
 #define QIREE_BIND_QIS_FUNCTION(FUNC, SUFFIX)            \
@@ -164,17 +138,19 @@ LlvmExecutor::LlvmExecutor(std::string const& filename,
     QIREE_BIND_RT_FUNCTION(result_record_output);
 #undef QIREE_BIND_RT_FUNCTION
 #undef QIREE_BIND_QIS_FUNCTION
+
+    QIREE_ENSURE(!module);
 }
 
 //---------------------------------------------------------------------------//
 //! Default destructor
-LlvmExecutor::~LlvmExecutor() = default;
+Executor::~Executor() = default;
 
 //---------------------------------------------------------------------------//
 /*!
  * Execute with the given interface functions.
  */
-void LlvmExecutor::operator()(QuantumInterface& qi, ResultInterface& ri) const
+void Executor::operator()(QuantumInterface& qi, ResultInterface& ri) const
 {
     QIREE_EXPECT(ee_);
 
@@ -189,7 +165,6 @@ void LlvmExecutor::operator()(QuantumInterface& qi, ResultInterface& ri) const
     r_interface_ = &ri;
 
     // Execute the main function
-    QIREE_ASSERT(entrypoint_);
     auto result = ee_->runFunction(entrypoint_, {});
     QIREE_DISCARD(result);
 }

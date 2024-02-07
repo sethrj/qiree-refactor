@@ -77,7 +77,7 @@ CODE_FILE = '''\
 '''
 
 TEST_HARNESS_FILE = '''\
-#include "{dirname}{name}.{hext}"
+#include "qiree/{dirname}{name}.{hext}"
 
 #include "qiree_test.hh"
 // #include "{name}.test.hh"
@@ -91,7 +91,7 @@ class {name}Test : public ::qiree::test::Test
     void SetUp() override {{}}
 }};
 
-TEST_F({name}Test, host)
+TEST_F({name}Test, all)
 {{
     // PRINT_EXPECTED(result.foo);
     // EXPECT_VEC_SOFT_EQ(expected_foo, result.foo);
