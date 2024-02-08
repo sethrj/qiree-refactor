@@ -79,6 +79,10 @@ llvm::Function* find_entry_point(llvm::Module& m)
     return nullptr;
 }
 
+//---------------------------------------------------------------------------//
+/*!
+ * Interpret a string attribute as a certain type.
+ */
 template<class T>
 void attr_get_to(llvm::Attribute const& attr, T& dest)
 {

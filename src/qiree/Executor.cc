@@ -310,6 +310,11 @@ Executor::Executor(Module&& module)
         std::string err_str;
         builder.setErrorStr(&err_str);
 
+        // Set execution options
+        llvm::TargetOptions opts;
+        opts.ExceptionModel = llvm::ExceptionHandling::DwarfCFI;
+        builder.setTargetOptions(opts);
+
         // Create the builder, or throw an exception with the failure
         std::unique_ptr<llvm::ExecutionEngine> ee{builder.create()};
         QIREE_VALIDATE(ee, << "failed to create execution engine: " << err_str);
@@ -321,7 +326,7 @@ Executor::Executor(Module&& module)
 
     // Add "lazy function creator" that just gives a more informative message
     ee_->InstallLazyFunctionCreator([](std::string const& s) -> void* {
-        QIREE_VALIDATE(false, << "cannot call unknown function '" << s << "'");
+        QIREE_NOT_IMPLEMENTED(s.c_str());
     });
 
     // Bind functions if available
