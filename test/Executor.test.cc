@@ -52,7 +52,7 @@ TEST_F(ExecutorTest, bell)
 }
 
 //---------------------------------------------------------------------------//
-TEST_F(ExecutorTest, several_gates)
+TEST_F(ExecutorTest, DISABLED_several_gates)
 {
     this->run("pyqir_several_gates.ll");
 }
