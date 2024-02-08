@@ -12,6 +12,7 @@
 #include <llvm/IR/Function.h>
 #include <llvm/IR/Module.h>
 
+#include "FunctionChecker.hh"
 #include "qiree/Assert.hh"
 
 namespace qiree
@@ -28,23 +29,9 @@ class GlobalMapper
     // Construct with module and engine
     inline GlobalMapper(llvm::Module const& mod, llvm::ExecutionEngine* ee);
 
-    //! Map a symbol name to a compiled function pointer
+    // Map a symbol name to a compiled function pointer
     template<class F>
-    void operator()(char const* name, F* func) const
-    {
-        static_assert(std::is_function_v<F>, "not a function");
-
-        llvm::Function* irfunc = mod_.getFunction(name);
-        if (!irfunc)
-        {
-            // Function isn't available in the module
-            return;
-        }
-        this->check_func(*irfunc);
-        // TODO: also add traits-based checking for function signature
-
-        return ee_->addGlobalMapping(irfunc, reinterpret_cast<void*>(func));
-    }
+    inline void operator()(char const* name, F* func) const;
 
   private:
     llvm::Module const& mod_;
@@ -68,13 +55,25 @@ GlobalMapper::GlobalMapper(llvm::Module const& mod, llvm::ExecutionEngine* ee)
 
 //---------------------------------------------------------------------------//
 /*!
- * Perform non-templated safety checks on a function.
+ * Map a symbol name to a compiled function pointer.
  */
-void GlobalMapper::check_func(llvm::Function const& irfunc) const
+template<class F>
+void GlobalMapper::operator()(char const* name, F* func) const
 {
-    QIREE_VALIDATE(irfunc.empty(),
-                   << "could not bind to already-defined function '"
-                   << irfunc.getName().str() << "'");
+    static_assert(std::is_function_v<F>, "not a function");
+
+    llvm::Function* irfunc = mod_.getFunction(name);
+    if (!irfunc)
+    {
+        // Function isn't available in the module (i.e. used by the current QIR
+        // file)
+        return;
+    }
+
+    // Throw an assertion if the function types don't match
+    FunctionChecker{*irfunc}(func);
+
+    return ee_->addGlobalMapping(irfunc, reinterpret_cast<void*>(func));
 }
 
 //---------------------------------------------------------------------------//
