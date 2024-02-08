@@ -29,6 +29,7 @@ add_library(qiree
   qiree/Executor.cc
   qiree/QuantumNotImpl.cc
 )
+target_compile_features(qiree PUBLIC cxx_std_17)
 target_link_libraries(qiree
   PRIVATE
     ${_llvm_libs}
