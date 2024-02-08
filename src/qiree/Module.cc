@@ -130,6 +130,7 @@ Module::Module(std::string const& filename, std::string const& entrypoint)
 }
 
 //---------------------------------------------------------------------------//
+Module::Module() = default;
 Module::~Module() = default;
 Module::Module(Module&&) = default;
 Module& Module::operator=(Module&&) = default;

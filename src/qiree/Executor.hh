@@ -11,6 +11,7 @@
 #include <string>
 
 #include "Macros.hh"
+#include "Types.hh"
 
 namespace llvm
 {
@@ -47,6 +48,9 @@ class Executor
   private:
     llvm::Function* entrypoint_{nullptr};
     llvm::Module* module_{nullptr};
+
+    EntryPointAttrs entry_point_attrs_;
+    ModuleFlags module_flags_;
     std::unique_ptr<llvm::ExecutionEngine> ee_;
 };
 

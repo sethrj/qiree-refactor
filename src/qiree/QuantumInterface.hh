@@ -43,6 +43,14 @@ class QuantumInterface
 {
   public:
     //@{
+    //! \name Executor setup/teardown
+    //! Prepare to build a quantum circuit for an entry point
+    virtual void set_up(EntryPointAttrs const&) = 0;
+    //! Complete an execution
+    virtual void tear_down() = 0;
+    //!@}
+
+    //@{
     //! \name Measurements
 
     virtual Result m(Qubit) = 0;  //!< body

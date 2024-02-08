@@ -33,6 +33,12 @@ class QuantumTestImpl final : public QuantumNotImpl
     // Construct with pointer to modifiable test result
     explicit QuantumTestImpl(TestResult* result);
 
+    //! Prepare to build a quantum circuit for an entry point
+    void set_up(EntryPointAttrs const&) final;
+
+    //! Complete an execution
+    void tear_down() final;
+
     // Measure the qubit and store in the result.
     void mz(Qubit, Result) final;
 

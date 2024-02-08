@@ -26,8 +26,8 @@ namespace qiree
 class Module
 {
   public:
-    // Empty constructor
-    Module() = default;
+    // Default empty constructor
+    Module();
     // Externally defined defaults
     ~Module();
     Module(Module&&);

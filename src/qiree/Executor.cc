@@ -297,6 +297,10 @@ Executor::Executor(Module&& module)
     QIREE_EXPECT(module);
     QIREE_EXPECT(entrypoint_ && module_);
 
+    // Save module and entry point attributes
+    entry_point_attrs_ = module.load_entry_point_attrs();
+    module_flags_ = module.load_module_flags();
+
     // Initialize LLVM
     llvm::InitializeNativeTarget();
     llvm::InitializeNativeTargetAsmPrinter();
@@ -411,11 +415,15 @@ void Executor::operator()(QuantumInterface& qi, ResultInterface& ri) const
                    << "cannot call LLVM executor recursively or in MT "
                       "environment (for now)");
     detail::EndGuard on_end_scope_([] {
+        q_interface_->tear_down();
         q_interface_ = nullptr;
         r_interface_ = nullptr;
     });
     q_interface_ = &qi;
     r_interface_ = &ri;
+
+    // Call setup on the interface
+    qi.set_up(entry_point_attrs_);
 
     // Execute the main function
     auto result = ee_->runFunction(entrypoint_, {});
