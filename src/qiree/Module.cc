@@ -7,13 +7,18 @@
 //---------------------------------------------------------------------------//
 #include "Module.hh"
 
+#include <sstream>
+#include <string_view>
 #include <llvm/IR/Attributes.h>
+#include <llvm/IR/Constants.h>
 #include <llvm/IR/Function.h>
 #include <llvm/IR/Module.h>
 #include <llvm/IRReader/IRReader.h>
 #include <llvm/Support/SourceMgr.h>
 
 #include "Assert.hh"
+
+using namespace std::string_view_literals;
 
 namespace qiree
 {
@@ -74,6 +79,16 @@ llvm::Function* find_entry_point(llvm::Module& m)
     return nullptr;
 }
 
+template<class T>
+void attr_get_to(llvm::Attribute const& attr, T& dest)
+{
+    std::istringstream is{attr.getValueAsString().str()};
+    is >> dest;
+    QIREE_VALIDATE(is,
+                   << "failed to parse attribute '"
+                   << std::string_view(attr.getKindAsString()) << "'");
+}
+
 //---------------------------------------------------------------------------//
 }  // namespace
 
@@ -118,10 +133,44 @@ Module& Module::operator=(Module&&) = default;
 //---------------------------------------------------------------------------//
 /*!
  * Process entry point attributes.
+ *
+ * We allow for older PyQIR which incorrectly names attributes: see
+ * https://github.com/qir-alliance/pyqir/issues/250 .
  */
 EntryPointAttrs Module::load_entry_point_attrs() const
 {
-    QIREE_NOT_IMPLEMENTED("entry point attributes");
+    QIREE_EXPECT(*this);
+
+    EntryPointAttrs result;
+    for (auto const& attr_set : entrypoint_->getAttributes())
+    {
+        for (auto const& attr : attr_set)
+        {
+            if (attr.isStringAttribute())
+            {
+                auto s = std::string_view(attr.getKindAsString());
+                if (s == "required_num_qubits"sv
+                    || s == "num_required_qubits"sv /* BAD PYQIR */)
+                {
+                    attr_get_to(attr, result.required_num_qubits);
+                }
+                else if (s == "required_num_results"sv
+                         || s == "num_required_results"sv /* BAD PYQIR */)
+                {
+                    attr_get_to(attr, result.required_num_results);
+                }
+                else if (s == "output_labeling_schema"sv)
+                {
+                    result.output_labeling_schema = attr.getValueAsString();
+                }
+                else if (s == "qir_profiles"sv)
+                {
+                    result.qir_profiles = attr.getValueAsString();
+                }
+            }
+        }
+    }
+    return result;
 }
 
 //---------------------------------------------------------------------------//
@@ -130,7 +179,29 @@ EntryPointAttrs Module::load_entry_point_attrs() const
  */
 ModuleFlags Module::load_module_flags() const
 {
-    QIREE_NOT_IMPLEMENTED("module flags");
+    QIREE_EXPECT(*this);
+
+    auto get_constant_int = [this](llvm::StringRef s) {
+        using llvm::mdconst::extract_or_null;
+        auto* md = module_->getModuleFlag(s);
+        return extract_or_null<llvm::ConstantInt>(md);
+    };
+
+    ModuleFlags flags;
+#define QIREE_EXTRACT(ATTR)                     \
+    do                                          \
+    {                                           \
+        if (auto* ci = get_constant_int(#ATTR)) \
+        {                                       \
+            flags.ATTR = ci->getZExtValue();    \
+        }                                       \
+    } while (0)
+    QIREE_EXTRACT(qir_major_version);
+    QIREE_EXTRACT(qir_minor_version);
+    QIREE_EXTRACT(dynamic_qubit_management);
+    QIREE_EXTRACT(dynamic_result_management);
+
+    return flags;
 }
 
 //---------------------------------------------------------------------------//
