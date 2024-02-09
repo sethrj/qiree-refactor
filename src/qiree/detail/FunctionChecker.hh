@@ -97,9 +97,9 @@ FunctionChecker::FunctionChecker(llvm::Function const& irfunc)
  * Check the given function's signature against an LLVMIR function.
  */
 template<class F>
-void FunctionChecker::operator()(F* func) const
+void FunctionChecker::operator()(F*) const
 {
-    using TraitsT = FuncTraits<F>;
+    using TraitsT = FuncTraits<F*>;
     this->check_impl(TraitsT::arg_size);
 
     // TODO: traits classes for arguments (by value, reference, ...)
