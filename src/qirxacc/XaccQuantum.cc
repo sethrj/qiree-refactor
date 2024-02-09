@@ -8,6 +8,7 @@
 #include "XaccQuantum.hh"
 
 #include <iostream>
+#include <xacc/xacc.hpp>
 
 #include "qiree/Assert.hh"
 
@@ -23,15 +24,27 @@ XaccQuantum::XaccQuantum(std::string const& accel_name, size_type shots)
 
     xacc::Initialize();
 
+    // Tell XACC to throw exceptions rather than calling std::exit
+    xacc::setIsPyApi();
+
     // Create accelerator
     accelerator_ = xacc::getAccelerator(accel_name);
     QIREE_VALIDATE(accelerator_, << "failed to create accelerator");
     accelerator_->updateConfiguration({{"shots", static_cast<int>(shots)}});
     // TODO: bit order is accelerator-dependent?
-    bit_order_ = xacc::AcceleratorBuffer::BitOrder::LSB;
+    endian_ = Endianness::little;
 
     // Create providers
     provider_ = xacc::getIRProvider("quantum");
+}
+
+//---------------------------------------------------------------------------//
+/*!
+ * Call finalize when xacc is destroyed.
+ */
+XaccQuantum::~XaccQuantum()
+{
+    xacc::Finalize();
 }
 
 //---------------------------------------------------------------------------//
@@ -84,6 +97,20 @@ QState XaccQuantum::read_result(Result)
 
 //---------------------------------------------------------------------------//
 /*!
+ * Initialize the execution environment, resetting qubits.
+ */
+void XaccQuantum::initialize(OptionalCString env)
+{
+    if (env)
+    {
+        std::cout
+            << "What's env for? No one knows! But here is some value: " << env
+            << std::endl;
+    }
+}
+
+//---------------------------------------------------------------------------//
+/*!
  * Execute the circuit and read outputs.
  */
 void XaccQuantum::array_record_output(size_type, OptionalCString)
@@ -99,11 +126,16 @@ void XaccQuantum::array_record_output(size_type, OptionalCString)
 void XaccQuantum::result_record_output(Result r, OptionalCString tag)
 {
     QIREE_EXPECT(r.value < this->num_results());
+    using BitOrder = xacc::AcceleratorBuffer::BitOrder;
+
     auto q = result_to_qubit_[r.value];
 
     // Get a map of string ("0" and "1" ???) -> int
-    auto counts
-        = buffer_->getMarginalCounts({static_cast<int>(q.value)}, bit_order_);
+    auto counts = buffer_->getMarginalCounts(
+        {static_cast<int>(q.value)},
+        endian_ == Endianness::little ? BitOrder::LSB : BitOrder::MSB);
+
+    // Print the result
     std::cout << "qubit " << q.value << " experiment "
               << (tag ? tag : "<null>")
               << "\n"
@@ -112,6 +144,15 @@ void XaccQuantum::result_record_output(Result r, OptionalCString tag)
               << "\n"
                  "1 "
               << counts["1"] << std::endl;
+}
+
+//---------------------------------------------------------------------------//
+/*!
+ * No one uses tuples!
+ */
+void XaccQuantum::tuple_record_output(size_type, OptionalCString)
+{
+    QIREE_NOT_IMPLEMENTED("XaccQuantum::tuple_record_output");
 }
 
 //---------------------------------------------------------------------------//

@@ -8,7 +8,8 @@ qiree_add_library(qirxacc
   XaccQuantum.cc
 )
 target_link_libraries(qirxacc
-  PUBLIC QIREE::qiree XACC::xacc
+  PUBLIC QIREE::qiree
+  PRIVATE XACC::xacc
 )
 
 #----------------------------------------------------------------------------#
