@@ -3,7 +3,7 @@
 // See the top-level COPYRIGHT file for details.
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 //---------------------------------------------------------------------------//
-//! \file QuantumTestImpl.cc
+//! \file qiree/QuantumTestImpl.cc
 //---------------------------------------------------------------------------//
 #include "QuantumTestImpl.hh"
 

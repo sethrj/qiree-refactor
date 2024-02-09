@@ -25,6 +25,8 @@ class EndGuard
     //! Call functor on destruction
     ~EndGuard() { func_(); }
 
+    QIREE_DELETE_COPY_MOVE(EndGuard);
+
   private:
     F func_;
 };

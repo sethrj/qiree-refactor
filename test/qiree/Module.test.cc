@@ -3,12 +3,11 @@
 // See the top-level COPYRIGHT file for details.
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 //---------------------------------------------------------------------------//
-//! \file Module.test.cc
+//! \file qiree/Module.test.cc
 //---------------------------------------------------------------------------//
 #include "qiree/Module.hh"
 
 #include "qiree_test.hh"
-// #include "Module.test.hh"
 
 namespace qiree
 {

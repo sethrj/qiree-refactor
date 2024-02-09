@@ -3,7 +3,7 @@
 // See the top-level COPYRIGHT file for details.
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 //---------------------------------------------------------------------------//
-//! \file Executor.test.cc
+//! \file qiree/Executor.test.cc
 //---------------------------------------------------------------------------//
 #include "qiree/Executor.hh"
 

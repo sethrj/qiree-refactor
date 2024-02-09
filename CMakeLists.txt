@@ -18,6 +18,7 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake")
 
 include(GNUInstallDirs)
 include(CMakePackageConfigHelpers)
+include("${CMAKE_CURRENT_LIST_DIR}/cmake/QIREEUtils.cmake")
 
 macro(qiree_set_default name value)
   if(NOT DEFINED ${name})
@@ -33,6 +34,7 @@ endmacro()
 
 # Components
 option(QIREE_BUILD_TESTS "Build QIR-EE unit tests" ON)
+option(QIREE_USE_XACC "Build XACC interface" OFF)
 qiree_set_default(BUILD_TESTING ${QIREE_BUILD_TESTS})
 
 # Assertion handling
@@ -111,8 +113,11 @@ if((LLVM_VERSION VERSION_LESS 14)
   message(WARNING "QIR-EE is only tested with LLVM 14-17: found version ${LLVM_VERSION}")
 endif()
 
+if(QIREE_USE_XACC)
+  find_package(XACC REQUIRED)
+endif()
+
 if(QIREE_BUILD_TESTS AND NOT GTest_FOUND)
-  # TODO: download and build GTest as a subproject if not available
   find_package(GTest)
   if(NOT GTest_FOUND)
     message(SEND_ERROR
@@ -158,8 +163,6 @@ endif()
 # Where to install configured cmake files
 set(QIREE_INSTALL_CMAKECONFIGDIR "${CMAKE_INSTALL_LIBDIR}/cmake/QIREE")
 
-#TODO
-
 install(FILES ${_cmake_files}
   DESTINATION "${QIREE_INSTALL_CMAKECONFIGDIR}"
   COMPONENT development
@@ -187,7 +190,7 @@ endforeach()
 
 # Add hints for direct dependencies and indirect geant dependencies
 list(APPEND QIREE_EXPORT_VARIABLES "\n# Hints for upstream dependencies")
-foreach(_key LLVM_DIR GTest_DIR)
+foreach(_key LLVM_DIR GTest_DIR XACC_DIR)
   set(_val "${${_key}}")
   if(_val)
     list(APPEND QIREE_EXPORT_VARIABLES
