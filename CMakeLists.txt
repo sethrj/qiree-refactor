@@ -106,9 +106,9 @@ set(QIREE_RUNTIME_OUTPUT_DIRECTORY
 
 enable_language(C) # Needed for LLVM
 find_package(LLVM REQUIRED)
-if(NOT LLVM_VERSION EQUAL 16 AND NOT DEFINED QIREE_LLVM_VERSION)
-  message(WARNING "QIR-EE expects LLVM version 16: found version ${LLVM_VERSION}")
-  set(QIREE_LLVM_VERSION ${LLVM_VERSION} CACHE INTERNAL "")
+if((LLVM_VERSION VERSION_LESS 14)
+  OR (LLVM_VERSION VERSION_GREATER 17.1))
+  message(WARNING "QIR-EE is only tested with LLVM 14-17: found version ${LLVM_VERSION}")
 endif()
 
 if(QIREE_BUILD_TESTS AND NOT GTest_FOUND)
@@ -161,10 +161,6 @@ set(QIREE_INSTALL_CMAKECONFIGDIR "${CMAKE_INSTALL_LIBDIR}/cmake/QIREE")
 #TODO
 
 install(FILES ${_cmake_files}
-  DESTINATION "${QIREE_INSTALL_CMAKECONFIGDIR}"
-  COMPONENT development
-)
-install(DIRECTORY "${PROJECT_SOURCE_DIR}/cmake/backport"
   DESTINATION "${QIREE_INSTALL_CMAKECONFIGDIR}"
   COMPONENT development
 )
@@ -241,15 +237,15 @@ install(EXPORT qiree-targets
   COMPONENT development
 )
 
-if(QIREE_VERSION VERSION_EQUAL "0.0.0")
-  install(CODE "
-message(WARNING \"The QIR-EE version was not detected during configuration.
-  (Check the beginning of your initial configure output for more details.)
-  This will result in the installation having incorrect version metadata and
-  will interfere with downstream CMake version requirements and may obscure
-  provenance data in output results.\")
-")
-endif()
-
+# Uncomment when v0.1.0 is tagged
+# if(QIREE_VERSION VERSION_EQUAL "0.0.0")
+#   install(CODE "
+# message(WARNING \"The QIR-EE version was not detected during configuration.
+#   (Check the beginning of your initial configure output for more details.)
+#   This will result in the installation having incorrect version metadata and
+#   will interfere with downstream CMake version requirements and may obscure
+#   provenance data in output results.\")
+# ")
+# endif()
 
 #----------------------------------------------------------------------------#

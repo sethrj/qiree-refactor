@@ -10,16 +10,18 @@ concurrency:
 
 jobs:
   linux:
-    name: ${{matrix.runner}}-${{matrix.compiler}}-${{matrix.version}}
+    name: ${{matrix.runner}}-${{matrix.compiler}}-${{matrix.version}}-llvm${{matrix.llvm}}
     strategy:
       matrix:
         include:
           - runner: jammy
             compiler: gcc
             version: 12
+            llvm: 14
           - runner: jammy
             compiler: clang
             version: 15
+            llvm: 15
     runs-on: >-
       ${{  matrix.runner == 'focal' && 'ubuntu-20.04'
         || matrix.runner == 'jammy' && 'ubuntu-22.04'
@@ -30,20 +32,20 @@ jobs:
       CCACHE_MAXSIZE: "10G"
       CC: ${{matrix.compiler}}-${{matrix.version}}
       CXX: ${{matrix.compiler == 'gcc' && 'g++' || 'clang++'}}-${{matrix.version}}
-      LLVM_VERSION: 14
     steps:
       - name: Install dependencies
         run: |
           sudo apt-get -q -y update
           sudo apt-get -q -y install \
-            ccache cmake ninja-build libgtest-dev llvm-${LLVM_VERSION}-dev \
+            ccache cmake ninja-build libgtest-dev \
+            llvm-${{matrix.llvm}}-dev \
             ${{matrix.compiler}}-${{matrix.version}} \
             ${{matrix.compiler == 'gcc' && format('g++-{0}', matrix.version) || ''}}
           echo "Installed toolchain:"
           ld --version | head -1
           $CC --version | head -1
           $CXX --version | head -1
-          llvm-config --version | head -1
+          llvm-config-${{matrix.llvm}} --version | head -1
       - name: Check out
         uses: actions/checkout@v4
       - name: Set up ccache
@@ -59,7 +61,7 @@ jobs:
         run: |
           mkdir build && cd build
           cmake -GNinja \
-            -DCQIREE_GIT_DESCRIBE="${{github.event.pull_request
+            -DQIREE_GIT_DESCRIBE="${{github.event.pull_request
               && format(';-pr.{0};', github.event.pull_request.number)
               || format(';-{0};', github.ref_name)}}" \
             -DQIREE_BUILD_TESTS:BOOL=ON \
