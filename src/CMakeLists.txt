@@ -40,8 +40,9 @@ target_include_directories(qiree
     "$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/src>"
     "$<BUILD_INTERFACE:${QIREE_HEADER_CONFIG_DIRECTORY}>"
     "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>"
-  PRIVATE
-    "${LLVM_INCLUDE_DIRS}"
+)
+target_include_directories(qiree SYSTEM PRIVATE
+  "${LLVM_INCLUDE_DIRS}"
 )
 
 add_library(QIREE::qiree ALIAS qiree)
