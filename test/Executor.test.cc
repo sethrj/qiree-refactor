@@ -79,9 +79,9 @@ h(Q{0})
 cnot(Q{0}, Q{1})
 mz(Q{0},R{0})
 mz(Q{1},R{1})
-record_output(2)
-record_output(R{0})
-record_output(R{1})
+array_record_output(2)
+result_record_output(R{0})
+result_record_output(R{1})
 tear_down
 )",
               result.commands.str());
@@ -110,11 +110,11 @@ mz(Q{0},R{0})
 mz(Q{1},R{1})
 mz(Q{2},R{2})
 mz(Q{3},R{3})
-record_output(4)
-record_output(R{0})
-record_output(R{1})
-record_output(R{2})
-record_output(R{3})
+array_record_output(4)
+result_record_output(R{0})
+result_record_output(R{1})
+result_record_output(R{2})
+result_record_output(R{3})
 tear_down
 )",
               result.commands.str());
@@ -134,8 +134,8 @@ h(Q{0})
 h(Q{0})
 h(Q{0})
 mz(Q{0},R{0})
-record_output(1)
-record_output(R{0})
+array_record_output(1)
+result_record_output(R{0})
 tear_down
 )",
               result.commands.str());
@@ -158,10 +158,10 @@ mz(Q{1},R{1})
 TODO: reset.body
 read_result(R{1})
 mz(Q{2},R{2})
-record_output(3)
-record_output(R{0})
-record_output(R{1})
-record_output(R{2})
+array_record_output(3)
+result_record_output(R{0})
+result_record_output(R{1})
+result_record_output(R{2})
 tear_down
 )",
               result.commands.str());

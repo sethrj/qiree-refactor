@@ -15,19 +15,19 @@ namespace qiree
 /*!
  * Interface class for the \c rt (runtime) namespace for storing results.
  *
+ * These four runtime functions must be implemented by all backends and are the
+ * only four allowable by a "base profile" program:
+ * https://github.com/qir-alliance/qir-spec/blob/main/specification/under_development/profiles/Base_Profile.md#runtime-functions
  * \code
+   void @__quantum__rt__initialize(i8*)
    void @__quantum__rt__array_record_output(i64, i8*)
    void @__quantum__rt__result_record_output(%Result*, i8*)
-   ; bool @__quantum__rt__result_equal(%Result*, %Result*)
-   ; %Result* @__quantum__rt__result_get_one()
-   ; %Result* @__quantum__rt__result_get_zero()
-   ; %String* @__quantum__rt__result_to_string(%Result*)
-   ; void @__quantum__rt__result_update_reference_count(%Result*, i32)
+   void @__quantum__rt__tuple_record_output(i64, i8*)
  * \endcode
  *
  * Typical usage:
  * \code
-array_record_output(3, nullptr);
+array_record_output(i64 3, i8* null);
 result_record_output(%Result* null, i8* null)
 result_record_output(%Result* inttoptr (i64 1 to %Result*), i8* null)
 result_record_output(%Result* inttoptr (i64 2 to %Result*), i8* null)
@@ -37,11 +37,17 @@ result_record_output(%Result* inttoptr (i64 2 to %Result*), i8* null)
 class ResultInterface
 {
   public:
-    //! Prepare to store N results.
-    virtual void record_output(size_type) = 0;
+    //! Initialize the execution environment, resetting qubits
+    virtual void initialize(OptionalCString env) = 0;
 
-    //! Mark the start of an array and its size.
-    virtual void record_output(Result result, OptionalCString tag) = 0;
+    //! Prepare to store N results (?)
+    virtual void array_record_output(size_type, OptionalCString tag) = 0;
+
+    //! Record one result into the progrma output
+    virtual void result_record_output(Result result, OptionalCString tag) = 0;
+
+    //! No one uses tuples??
+    virtual void tuple_record_output(size_type, OptionalCString tag) = 0;
 
   protected:
     virtual ~ResultInterface() = default;

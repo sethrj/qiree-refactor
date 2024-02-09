@@ -56,10 +56,10 @@ class QuantumTestImpl final : public QuantumInterface
 
     //// NOT IMPLEMENTED ////
 
-    Result m(Qubit) override;  //!< body
+    Result m(Qubit) override;
     Result measure(Array, Array) override;
     Result mresetz(Qubit) override;
-    //
+
     void ccx(Qubit, Qubit) override;
     void cx(Qubit, Qubit) override;
     void cy(Qubit, Qubit) override;
@@ -119,11 +119,17 @@ class ResultTestImpl final : public ResultInterface
     // Construct with pointer to modifiable test result
     explicit ResultTestImpl(TestResult* result);
 
-    // Prepare to store N results.
-    void record_output(size_type) final;
+    //! Initialize the execution environment, resetting qubits
+    void initialize(OptionalCString env) final;
 
-    // Mark the start of an array and its size.
-    void record_output(Result result, OptionalCString tag) final;
+    // Prepare to store N results.
+    void array_record_output(size_type, OptionalCString tag) final;
+
+    // Store one result
+    void result_record_output(Result, OptionalCString tag) final;
+
+    // No one uses tuples??
+    void tuple_record_output(size_type, OptionalCString tag) final;
 
   private:
     TestResult* tr_;

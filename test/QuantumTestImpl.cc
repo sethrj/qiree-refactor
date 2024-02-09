@@ -266,21 +266,54 @@ ResultTestImpl::ResultTestImpl(TestResult* tr) : tr_{tr}
 
 //---------------------------------------------------------------------------//
 /*!
+ * Initialize the execution environment, resetting qubits
+ */
+void ResultTestImpl::initialize(OptionalCString env)
+{
+    tr_->commands << "initialize(";
+    if (env)
+    {
+        tr_->commands << env;
+    }
+    tr_->commands << ")\n";
+}
+
+//---------------------------------------------------------------------------//
+/*!
  * Prepare to store N results.
  */
-void ResultTestImpl::record_output(size_type s)
+void ResultTestImpl::array_record_output(size_type s, OptionalCString tag)
 {
     ASSERT_GT(s, 0);
-    tr_->commands << "record_output(" << s << ")\n";
+    tr_->commands << "array_record_output(" << s;
+    if (tag)
+    {
+        tr_->commands << ", " << tag;
+    }
+    tr_->commands << ")\n";
 }
 
 //---------------------------------------------------------------------------//
 /*!
  * Mark the start of an array and its size.
  */
-void ResultTestImpl::record_output(Result result, OptionalCString tag)
+void ResultTestImpl::result_record_output(Result result, OptionalCString tag)
 {
-    tr_->commands << "record_output(" << result;
+    tr_->commands << "result_record_output(" << result;
+    if (tag)
+    {
+        tr_->commands << ", " << tag;
+    }
+    tr_->commands << ")\n";
+}
+
+//---------------------------------------------------------------------------//
+/*!
+ * Mark the start of an array and its size.
+ */
+void ResultTestImpl::tuple_record_output(size_type s, OptionalCString tag)
+{
+    tr_->commands << "tuple_record_output(" << s;
     if (tag)
     {
         tr_->commands << ", " << tag;

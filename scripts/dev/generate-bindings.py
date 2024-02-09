@@ -165,7 +165,7 @@ def write_lines(f, lines):
     for line in lines:
         print(line, file=f)
 
-def main():
+def generate_qis():
     process_line = QisGenerator()
     with open("qis.ll") as f:
         for line in f:
@@ -181,4 +181,4 @@ def main():
         write_lines(f, process_line.cc_code)
 
 if __name__ == "__main__":
-    main()
+    generate_qis()

@@ -272,15 +272,15 @@ void QIREE_QIS_FUNCTION(assertmeasurementprobability, ctl)(std::uintptr_t arg1,
 //---------------------------------------------------------------------------//
 // RUNTIME
 //---------------------------------------------------------------------------//
-void QIREE_RT_FUNCTION(array_record_output)(size_type s)
+void QIREE_RT_FUNCTION(array_record_output)(size_type s, OptionalCString tag)
 {
-    return r_interface_->record_output(s);
+    return r_interface_->array_record_output(s, tag);
 }
 
 void QIREE_RT_FUNCTION(result_record_output)(std::uintptr_t r,
                                              OptionalCString tag)
 {
-    return r_interface_->record_output(Result{r}, tag);
+    return r_interface_->result_record_output(Result{r}, tag);
 }
 
 //!@}

@@ -28,4 +28,11 @@ inline std::ostream& operator<<(std::ostream& os, Qubit q)
 }
 
 //---------------------------------------------------------------------------//
+inline std::ostream& operator<<(std::ostream& os, Tuple t)
+{
+    os << "T{" << t.value << '}';
+    return os;
+}
+
+//---------------------------------------------------------------------------//
 }  // namespace qiree
