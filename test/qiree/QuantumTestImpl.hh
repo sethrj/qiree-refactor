@@ -10,7 +10,7 @@
 #include <sstream>
 
 #include "qiree/QuantumInterface.hh"
-#include "qiree/ResultInterface.hh"
+#include "qiree/RuntimeInterface.hh"
 
 namespace qiree
 {
@@ -113,7 +113,7 @@ class QuantumTestImpl final : public QuantumInterface
 /*!
  * Implementation of the result output runtime interface.
  */
-class ResultTestImpl final : public ResultInterface
+class ResultTestImpl final : public RuntimeInterface
 {
   public:
     // Construct with pointer to modifiable test result

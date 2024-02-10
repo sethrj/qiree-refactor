@@ -18,7 +18,7 @@
 #include "Assert.hh"
 #include "Module.hh"
 #include "QuantumInterface.hh"
-#include "ResultInterface.hh"
+#include "RuntimeInterface.hh"
 #include "detail/EndGuard.hh"
 #include "detail/GlobalMapper.hh"
 
@@ -34,7 +34,7 @@ namespace
  * std::function.
  */
 static QuantumInterface* q_interface_{nullptr};
-static ResultInterface* r_interface_{nullptr};
+static RuntimeInterface* r_interface_{nullptr};
 
 //---------------------------------------------------------------------------//
 //! Generate a function name without a specialization suffix
@@ -407,7 +407,7 @@ Executor::~Executor() = default;
 /*!
  * Execute with the given interface functions.
  */
-void Executor::operator()(QuantumInterface& qi, ResultInterface& ri) const
+void Executor::operator()(QuantumInterface& qi, RuntimeInterface& ri) const
 {
     QIREE_EXPECT(ee_);
 

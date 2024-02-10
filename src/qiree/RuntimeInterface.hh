@@ -3,7 +3,7 @@
 // See the top-level COPYRIGHT file for details.
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 //---------------------------------------------------------------------------//
-//! \file qiree/ResultInterface.hh
+//! \file qiree/RuntimeInterface.hh
 //---------------------------------------------------------------------------//
 #pragma once
 
@@ -13,7 +13,7 @@ namespace qiree
 {
 //---------------------------------------------------------------------------//
 /*!
- * Interface class for the \c rt (runtime) namespace for storing results.
+ * Interface class for the \c rt (runtime) namespace.
  *
  * These four runtime functions must be implemented by all backends and are the
  * only four allowable by a "base profile" program:
@@ -34,7 +34,7 @@ result_record_output(%Result* inttoptr (i64 2 to %Result*), i8* null)
  * \endcode
  */
 
-class ResultInterface
+class RuntimeInterface
 {
   public:
     //! Initialize the execution environment, resetting qubits
@@ -50,7 +50,7 @@ class ResultInterface
     virtual void tuple_record_output(size_type, OptionalCString tag) = 0;
 
   protected:
-    virtual ~ResultInterface() = default;
+    virtual ~RuntimeInterface() = default;
 };
 
 //---------------------------------------------------------------------------//

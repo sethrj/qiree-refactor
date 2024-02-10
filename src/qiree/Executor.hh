@@ -25,7 +25,7 @@ namespace qiree
 //---------------------------------------------------------------------------//
 class Module;
 class QuantumInterface;
-class ResultInterface;
+class RuntimeInterface;
 
 //---------------------------------------------------------------------------//
 /*!
@@ -43,7 +43,7 @@ class Executor
     QIREE_DELETE_COPY_MOVE(Executor);
 
     // Execute with the given interface functions
-    void operator()(QuantumInterface& qi, ResultInterface& ri) const;
+    void operator()(QuantumInterface& qi, RuntimeInterface& ri) const;
 
   private:
     llvm::Function* entrypoint_{nullptr};

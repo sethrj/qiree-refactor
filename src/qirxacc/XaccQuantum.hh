@@ -11,7 +11,7 @@
 
 #include "qiree/Macros.hh"
 #include "qiree/QuantumNotImpl.hh"
-#include "qiree/ResultInterface.hh"
+#include "qiree/RuntimeInterface.hh"
 #include "qiree/Types.hh"
 
 namespace xacc
@@ -29,7 +29,7 @@ namespace qiree
  * Translate instructions from QIR to XACC and execute them on read.
  */
 class XaccQuantum final : virtual public QuantumNotImpl,
-                          virtual public ResultInterface
+                          virtual public RuntimeInterface
 {
   public:
     // Construct with accelerator name and number of shots
