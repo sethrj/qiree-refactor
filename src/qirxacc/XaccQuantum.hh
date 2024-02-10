@@ -7,6 +7,7 @@
 //---------------------------------------------------------------------------//
 #pragma once
 
+#include <initializer_list>
 #include <vector>
 
 #include "qiree/Macros.hh"
@@ -33,7 +34,9 @@ class XaccQuantum final : virtual public QuantumNotImpl,
 {
   public:
     // Construct with accelerator name and number of shots
-    XaccQuantum(std::string const& accel_name, size_type shots);
+    XaccQuantum(std::string const& accel_name,
+                size_type shots,
+                std::vector<std::string> args = {});
 
     // Call finalize when xacc is destroyed.
     ~XaccQuantum();
@@ -76,12 +79,39 @@ class XaccQuantum final : virtual public QuantumNotImpl,
     void tuple_record_output(size_type, OptionalCString) final;
     //!@}
 
+    //!@{
+    //! \name Circuit construction
+    void ccx(Qubit, Qubit) final;
+    void ccnot(Qubit, Qubit, Qubit);  // TODO: not in examples or qir runner
+    void cnot(Qubit, Qubit) final;
+    void cx(Qubit, Qubit) final;
+    void cy(Qubit, Qubit) final;
+    void cz(Qubit, Qubit) final;
+    void h(Qubit) final;
+    void reset(Qubit) final;
+    void rx(double, Qubit) final;
+    void ry(double, Qubit) final;
+    void rz(double, Qubit) final;
+    void rzz(double, Qubit, Qubit) final;
+    void s(Qubit) final;
+    void s_adj(Qubit) final;
+    void swap(Qubit, Qubit) final;
+    void t(Qubit) final;
+    void t_adj(Qubit) final;
+    void x(Qubit) final;
+    void y(Qubit) final;
+    void z(Qubit) final;
+    //!@}
+
   private:
+    //// TYPES ////
     enum class Endianness
     {
         little,
         big
     };
+
+    //// DATA ////
 
     size_type num_qubits_{};
     std::vector<Qubit> result_to_qubit_;
@@ -90,7 +120,18 @@ class XaccQuantum final : virtual public QuantumNotImpl,
     std::shared_ptr<xacc::AcceleratorBuffer> buffer_;
     std::shared_ptr<xacc::Accelerator> accelerator_;
     std::shared_ptr<xacc::IRProvider> provider_;
-    std::shared_ptr<xacc::CompositeInstruction> ansatz_;
+    std::shared_ptr<xacc::CompositeInstruction> cur_circuit_;
+
+    //// HELPER FUNCTIONS ////
+
+    // Add an instruction with a single qubit
+    template<class... Ts>
+    void add_instruction(std::string s, Qubit q, Ts... args);
+
+    // Add an instruction with multiple qubits
+    template<class... Ts>
+    void
+    add_instruction(std::string s, std::initializer_list<Qubit> qs, Ts... args);
 };
 
 //---------------------------------------------------------------------------//
