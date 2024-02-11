@@ -158,9 +158,9 @@ void QuantumTestImpl::reset(Qubit)
 {
     tr_->commands << "TODO: reset.body\n";
 }
-void QuantumTestImpl::rx(double, Qubit)
+void QuantumTestImpl::rx(double r, Qubit q)
 {
-    tr_->commands << "TODO: rx.body\n";
+    tr_->commands << "rx(" << r << ", " << q << ")\n";
 }
 void QuantumTestImpl::rx(Array, Tuple)
 {
@@ -170,9 +170,9 @@ void QuantumTestImpl::rxx(double, Qubit, Qubit)
 {
     tr_->commands << "TODO: rxx.body\n";
 }
-void QuantumTestImpl::ry(double, Qubit)
+void QuantumTestImpl::ry(double r, Qubit q)
 {
-    tr_->commands << "TODO: ry.body\n";
+    tr_->commands << "ry(" << r << ", " << q << ")\n";
 }
 void QuantumTestImpl::ry(Array, Tuple)
 {
@@ -182,9 +182,9 @@ void QuantumTestImpl::ryy(double, Qubit, Qubit)
 {
     tr_->commands << "TODO: ryy.body\n";
 }
-void QuantumTestImpl::rz(double, Qubit)
+void QuantumTestImpl::rz(double r, Qubit q)
 {
-    tr_->commands << "TODO: rz.body\n";
+    tr_->commands << "rz(" << r << ", " << q << ")\n";
 }
 void QuantumTestImpl::rz(Array, Tuple)
 {
@@ -198,9 +198,9 @@ void QuantumTestImpl::s_adj(Qubit)
 {
     tr_->commands << "TODO: s.adj\n";
 }
-void QuantumTestImpl::s(Qubit)
+void QuantumTestImpl::s(Qubit q)
 {
-    tr_->commands << "TODO: s.body\n";
+    tr_->commands << "s(" << q << ")\n";
 }
 void QuantumTestImpl::s(Array, Qubit)
 {

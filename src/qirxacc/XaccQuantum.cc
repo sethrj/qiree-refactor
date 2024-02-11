@@ -20,15 +20,27 @@ namespace qiree
 {
 //---------------------------------------------------------------------------//
 /*!
+ * Call initialize explicitly with args.
+ */
+void XaccQuantum::initialize(std::vector<std::string> args)
+{
+    xacc::Initialize(std::move(args));
+}
+
+//---------------------------------------------------------------------------//
+/*!
  * Construct with accelerator name and number of shots.
  */
-XaccQuantum::XaccQuantum(std::string const& accel_name,
-                         size_type shots,
-                         std::vector<std::string> args)
+XaccQuantum::XaccQuantum(std::string const& accel_name, size_type shots)
 {
     QIREE_VALIDATE(shots > 0, << "invalid number of shots " << shots);
 
-    xacc::Initialize(std::move(args));
+    if (!xacc::isInitialized())
+    {
+        // Perhaps XaccQuantum::initialize was already called?
+        xacc::Initialize();
+        // TODO: uninstall xacc signal handlers
+    }
     QIREE_ASSERT(xacc::isInitialized());
 
     // Tell XACC to throw exceptions rather than calling std::exit
@@ -44,6 +56,12 @@ XaccQuantum::XaccQuantum(std::string const& accel_name,
     // Create providers
     provider_ = xacc::getIRProvider("quantum");
 }
+
+//---------------------------------------------------------------------------//
+/*!
+ * Construct with simulator.
+ */
+XaccQuantum::XaccQuantum() : XaccQuantum{"qsim", 1} {}
 
 //---------------------------------------------------------------------------//
 /*!

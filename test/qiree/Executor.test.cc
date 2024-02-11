@@ -88,6 +88,23 @@ tear_down
 }
 
 //---------------------------------------------------------------------------//
+TEST_F(ExecutorTest, rotation)
+{
+    auto result = this->run("rotation.ll");
+    EXPECT_EQ(R"(
+set_up(q=1, r=1)
+h(Q{0})
+rx(0.523599, Q{0})
+mz(Q{0},R{0})
+array_record_output(1)
+result_record_output(R{0})
+tear_down
+)",
+              result.commands.str())
+        << result.commands.str();
+}
+
+//---------------------------------------------------------------------------//
 TEST_F(ExecutorTest, several_gates)
 {
     auto result = this->run("pyqir_several_gates.ll");
@@ -96,10 +113,10 @@ set_up(q=4, r=4)
 h(Q{0})
 cnot(Q{0}, Q{1})
 TODO: cz.body
-TODO: rx.body
-TODO: ry.body
-TODO: rz.body
-TODO: s.body
+rx(0.523599, Q{1})
+ry(1.047, Q{2})
+rz(1.571, Q{3})
+s(Q{0})
 TODO: s.adj
 TODO: t.body
 TODO: t.adj

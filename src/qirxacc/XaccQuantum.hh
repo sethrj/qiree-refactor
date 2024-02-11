@@ -33,10 +33,14 @@ class XaccQuantum final : virtual public QuantumNotImpl,
                           virtual public RuntimeInterface
 {
   public:
+    // Call initialize explicitly with args
+    static void initialize(std::vector<std::string> args);
+
     // Construct with accelerator name and number of shots
-    XaccQuantum(std::string const& accel_name,
-                size_type shots,
-                std::vector<std::string> args = {});
+    XaccQuantum(std::string const& accel_name, size_type shots);
+
+    // Construct with simulator
+    XaccQuantum();
 
     // Call finalize when xacc is destroyed.
     ~XaccQuantum();

@@ -32,7 +32,7 @@ function(qiree_add_test ns name)
     ${ns}/${name}.test.cc
   )
   target_link_libraries(${_target}
-    QIREE::qiree
+    QIREE::${ns}
     qiree_test_lib
     GTest::gtest_main
   )
@@ -51,6 +51,7 @@ qiree_add_test(qiree Module)
 #---------------------------------------------------------------------------##
 
 if(QIREE_USE_XACC)
+  qiree_add_test(qirxacc XaccQuantum)
 endif()
 
 #---------------------------------------------------------------------------##
