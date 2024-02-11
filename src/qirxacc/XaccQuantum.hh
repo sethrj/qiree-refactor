@@ -8,6 +8,7 @@
 #pragma once
 
 #include <initializer_list>
+#include <ostream>
 #include <vector>
 
 #include "qiree/Macros.hh"
@@ -37,10 +38,12 @@ class XaccQuantum final : virtual public QuantumNotImpl,
     static void initialize(std::vector<std::string> args);
 
     // Construct with accelerator name and number of shots
-    XaccQuantum(std::string const& accel_name, size_type shots);
+    XaccQuantum(std::ostream& os,
+                std::string const& accel_name,
+                size_type shots);
 
     // Construct with simulator
-    XaccQuantum();
+    explicit XaccQuantum(std::ostream& os);
 
     // Call finalize when xacc is destroyed.
     ~XaccQuantum();
@@ -121,6 +124,7 @@ class XaccQuantum final : virtual public QuantumNotImpl,
     std::vector<Qubit> result_to_qubit_;
     Endianness endian_;
 
+    std::ostream& output_;
     std::shared_ptr<xacc::AcceleratorBuffer> buffer_;
     std::shared_ptr<xacc::Accelerator> accelerator_;
     std::shared_ptr<xacc::IRProvider> provider_;

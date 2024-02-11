@@ -7,6 +7,8 @@
 //---------------------------------------------------------------------------//
 #include "qirxacc/XaccQuantum.hh"
 
+#include <regex>
+
 #include "qiree/Types.hh"
 #include "qiree_test.hh"
 
@@ -21,6 +23,14 @@ class XaccQuantumTest : public ::qiree::test::Test
 {
   protected:
     void SetUp() override {}
+
+    static std::string clean_output(std::string&& s)
+    {
+        std::string result = std::move(s);
+        static std::regex const subs_ptr("0x[0-9a-f]+");
+        result = std::regex_replace(result, subs_ptr, "0x0");
+        return result;
+    }
 };
 
 // Use "death test" to list compilers and accelerators since xacc calls
@@ -50,7 +60,13 @@ TEST_F(XaccQuantumTest, sim_rotation)
     using Q = Qubit;
     using R = Result;
 
-    XaccQuantum xacc_sim;
+    std::ostringstream os;
+    os << '\n';
+
+    // Create a simulator that will write to the string stream
+    XaccQuantum xacc_sim{os};
+
+    // Call functions in the same sequence that rotation.ll would
     xacc_sim.set_up([] {
         EntryPointAttrs attrs;
         attrs.required_num_qubits = 1;
@@ -63,6 +79,23 @@ TEST_F(XaccQuantumTest, sim_rotation)
     xacc_sim.array_record_output(1, nullptr);
     xacc_sim.result_record_output(R{0}, "tag");
     xacc_sim.tear_down();
+
+    auto result = clean_output(os.str());
+    EXPECT_EQ(R"(
+{
+    "AcceleratorBuffer": {
+        "name": "qreg_0x0",
+        "size": 1,
+        "Information": {},
+        "Measurements": {
+            "": 1
+        }
+    }
+}
+qubit 0 experiment tag: {0: 0, 1: 0}
+)",
+              result)
+        << result;
 }
 
 //---------------------------------------------------------------------------//

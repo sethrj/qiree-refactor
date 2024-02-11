@@ -31,7 +31,10 @@ void XaccQuantum::initialize(std::vector<std::string> args)
 /*!
  * Construct with accelerator name and number of shots.
  */
-XaccQuantum::XaccQuantum(std::string const& accel_name, size_type shots)
+XaccQuantum::XaccQuantum(std::ostream& os,
+                         std::string const& accel_name,
+                         size_type shots)
+    : output_{os}
 {
     QIREE_VALIDATE(shots > 0, << "invalid number of shots " << shots);
 
@@ -61,7 +64,7 @@ XaccQuantum::XaccQuantum(std::string const& accel_name, size_type shots)
 /*!
  * Construct with simulator.
  */
-XaccQuantum::XaccQuantum() : XaccQuantum{"qsim", 1} {}
+XaccQuantum::XaccQuantum(std::ostream& os) : XaccQuantum{os, "qsim", 1} {}
 
 //---------------------------------------------------------------------------//
 /*!
@@ -128,7 +131,7 @@ void XaccQuantum::initialize(OptionalCString env)
 {
     if (env)
     {
-        std::cout
+        output_
             << "What's env for? No one knows! But here is some value: " << env
             << std::endl;
     }
@@ -141,7 +144,7 @@ void XaccQuantum::initialize(OptionalCString env)
 void XaccQuantum::array_record_output(size_type, OptionalCString)
 {
     accelerator_->execute(buffer_, cur_circuit_);
-    buffer_->print();
+    buffer_->print(output_);
 }
 
 //---------------------------------------------------------------------------//
@@ -161,14 +164,9 @@ void XaccQuantum::result_record_output(Result r, OptionalCString tag)
         endian_ == Endianness::little ? BitOrder::LSB : BitOrder::MSB);
 
     // Print the result
-    std::cout << "qubit " << q.value << " experiment "
-              << (tag ? tag : "<null>")
-              << "\n"
-                 "0 "
-              << counts["0"]
-              << "\n"
-                 "1 "
-              << counts["1"] << std::endl;
+    output_ << "qubit " << q.value << " experiment " << (tag ? tag : "<null>")
+            << ": {0: " << counts["0"] << ", 1: " << counts["1"] << '}'
+            << std::endl;
 }
 
 //---------------------------------------------------------------------------//

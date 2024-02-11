@@ -32,7 +32,7 @@ void run(std::string const& filename,
     Executor execute{Module{filename}};
 
     // Set up XACC
-    XaccQuantum xacc(accel_name, num_shots);
+    XaccQuantum xacc(std::cout, accel_name, num_shots);
 
     // Run
     execute(xacc, xacc);
