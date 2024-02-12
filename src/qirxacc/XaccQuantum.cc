@@ -116,11 +116,36 @@ void XaccQuantum::mz(Qubit q, Result r)
 //---------------------------------------------------------------------------//
 /*!
  * Read the value of a result.
+ *
+ * NOTE: this is currently used *only* for the feed-forward operation in
+ * \c teleport.ll corresponding to the following instructions emitted from
+ * \code
+qis.if_result(results[0], one=lambda: qis.z(target))
+ * \endcode
+ * which are:
+ * \code
+  %0 = call i1 @__quantum__qis__read_result__body(%Result* null)
+  br i1 %0, label %then, label %else
+
+then:                                             ; preds = %entry
+  call void @__quantum__qis__z__body(%Qubit* inttoptr (i64 2 to %Qubit*))
+  br label %continue
+
+else:                                             ; preds = %entry
+  br label %continue
+
+continue:                                         ; preds = %else, %then
+ * \endcode
+ *
+ *
  */
-QState XaccQuantum::read_result(Result)
+QState XaccQuantum::read_result(Result r)
 {
-    // ?????
-    return QState::zero;
+    QIREE_EXPECT(r.value < this->num_results());
+
+    output_ << "read_result(R{" << r.value << "} => Q{"
+            << result_to_qubit_[r.value].value << "})";
+    return QState::one;
 }
 
 //---------------------------------------------------------------------------//
