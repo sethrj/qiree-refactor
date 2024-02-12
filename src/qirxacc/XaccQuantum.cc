@@ -22,7 +22,7 @@ namespace qiree
 /*!
  * Call initialize explicitly with args.
  */
-void XaccQuantum::initialize(std::vector<std::string> args)
+void XaccQuantum::xacc_init(std::vector<std::string> args)
 {
     xacc::Initialize(std::move(args));
 }

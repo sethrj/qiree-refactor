@@ -43,14 +43,14 @@ using XaccQuantumDeathTest = XaccQuantumTest;
 
 TEST_F(XaccQuantumDeathTest, list_compilers)
 {
-    EXPECT_EXIT(XaccQuantum::initialize({"--list-compilers"}),
+    EXPECT_EXIT(XaccQuantum::xacc_init({"--list-compilers"}),
                 testing::ExitedWithCode(0),
                 "" /* no stderr output; it uses cout */);
 }
 
 TEST_F(XaccQuantumDeathTest, list_accelerators)
 {
-    EXPECT_EXIT(XaccQuantum::initialize({"--list-accelerators"}),
+    EXPECT_EXIT(XaccQuantum::xacc_init({"--list-accelerators"}),
                 testing::ExitedWithCode(0),
                 "" /* no stderr output; it uses cout */);
 }
