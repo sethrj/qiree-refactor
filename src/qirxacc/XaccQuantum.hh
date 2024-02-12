@@ -8,6 +8,7 @@
 #pragma once
 
 #include <initializer_list>
+#include <memory>
 #include <ostream>
 #include <vector>
 
