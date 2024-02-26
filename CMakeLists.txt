@@ -128,7 +128,26 @@ if(QIREE_BUILD_DOCS)
     )
   endif()
 
+  if(NOT Python_FOUND)
+    find_package(Python REQUIRED)
+  endif()
+  set(QIREE_PYTHONPATH "$ENV{PYTHONPATH}" CACHE STRING
+    "Python path used for finding modules and generating documentation"
+  )
+
+  qiree_check_python_module(QIREE_USE_Sphinx sphinx)
+  set(Sphinx_FOUND ${QIREE_USE_Sphinx})
+  if(Sphinx_FOUND)
+    qiree_check_python_module(QIREE_USE_Breathe breathe)
+    qiree_check_python_module(QIREE_USE_Furo "furo")
+    qiree_check_python_module(QIREE_USE_SphinxBibtex "sphinxcontrib.bibtex")
+    if(QIREE_USE_Breathe)
+      find_program(LATEXMK_EXECUTABLE latexmk)
+    endif()
+  endif()
+  include(ExternalProject)
 endif()
+
 if(QIREE_BUILD_TESTS AND NOT GTest_FOUND)
   find_package(GTest)
   if(NOT GTest_FOUND)

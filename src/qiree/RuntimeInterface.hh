@@ -18,20 +18,20 @@ namespace qiree
  * These four runtime functions must be implemented by all backends and are the
  * only four allowable by a "base profile" program:
  * https://github.com/qir-alliance/qir-spec/blob/main/specification/under_development/profiles/Base_Profile.md#runtime-functions
- * \code
-   void @__quantum__rt__initialize(i8*)
-   void @__quantum__rt__array_record_output(i64, i8*)
-   void @__quantum__rt__result_record_output(%Result*, i8*)
-   void @__quantum__rt__tuple_record_output(i64, i8*)
- * \endcode
+ * \verbatim
+void @__quantum__rt__initialize(i8*)
+void @__quantum__rt__array_record_output(i64, i8*)
+void @__quantum__rt__result_record_output(%Result*, i8*)
+void @__quantum__rt__tuple_record_output(i64, i8*)
+ * \endverbatim
  *
  * Typical usage:
- * \code
+ * \verbatim
 array_record_output(i64 3, i8* null);
 result_record_output(%Result* null, i8* null)
 result_record_output(%Result* inttoptr (i64 1 to %Result*), i8* null)
 result_record_output(%Result* inttoptr (i64 2 to %Result*), i8* null)
- * \endcode
+ * \endverbatim
  */
 
 class RuntimeInterface

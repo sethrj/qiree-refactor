@@ -44,6 +44,28 @@ CMake utilities for managing QIR-EE.
   the ``<output>` path is configured to the project build "include" directory.
 
 
+.. command:: qiree_check_python_module
+
+   Determine whether a given Python module is available with the current
+   environment. ::
+
+     qiree_check_python_module(<variable> <module>)
+
+   ``<variable>``
+     Variable name that will be set to whether the module exists
+
+   ``<module>``
+     Python module name, e.g. "numpy" or "scipy.linalg"
+
+   Note that because this function caches the Python script result to save
+   reconfigure time (or when multiple scripts check for the same module),
+   changing the Python executable or installed modules may mean
+   having to delete or modify your CMakeCache.txt file.
+
+   Example::
+
+      qiree_check_python_module(has_numpy "numpy")
+
 #]=======================================================================]
 #-----------------------------------------------------------------------------#
 
@@ -105,5 +127,40 @@ function(qiree_configure_file input output)
     "${QIREE_HEADER_CONFIG_DIRECTORY}/${output}"
     ${ARGN})
 endfunction()
+
+#-----------------------------------------------------------------------------#
+function(qiree_check_python_module varname module)
+  set(_cache_name QIREE_CHECK_PYTHON_MODULE_${module})
+  if(DEFINED ${_cache_name})
+    # We've already checked for this module
+    set(_found "${${_cache_name}}")
+  else()
+    message(STATUS "Check Python module ${module}")
+    set(_cmd
+      "${CMAKE_COMMAND}" -E env "PYTHONPATH=${QIREE_PYTHONPATH}"
+      "${Python_EXECUTABLE}" -c "import ${module}"
+    )
+    execute_process(COMMAND
+      ${_cmd}
+      RESULT_VARIABLE _result
+      ERROR_QUIET # hide error message if module unavailable
+    )
+    # Note: use JSON-compatible T/F representation
+    if(_result)
+      set(_msg "not found")
+      set(_found false)
+    else()
+      set(_msg "found")
+      set(_found true)
+    endif()
+    message(STATUS "Check Python module ${module} -- ${_msg}")
+    set(${_cache_name} "${_found}" CACHE INTERNAL
+      "Whether Python module ${module} is available")
+  endif()
+
+  # Save outgoing variable
+  set(${varname} "${_found}" PARENT_SCOPE)
+endfunction()
+
 
 #-----------------------------------------------------------------------------#

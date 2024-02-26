@@ -23,19 +23,19 @@ namespace qiree
  * measure the quantum circuit).
  *
  * These are mapped to QIR functions:
- * \code
-    void @__quantum__qis__mz__body(%Qubit*, %Result*)
-    bool @__quantum__qis__read_result__body(%Result*)
-    void @__quantum__qis__r__ctl(%Array*, %Tuple*)
-    void @__quantum__qis__r__adj(i2, double, %Qubit*)
- * \endcode
+ * \verbatim
+void @__quantum__qis__mz__body(%Qubit*, %Result*)
+bool @__quantum__qis__read_result__body(%Result*)
+void @__quantum__qis__r__ctl(%Array*, %Tuple*)
+void @__quantum__qis__r__adj(i2, double, %Qubit*)
+ * \endverbatim
  * are represented in this interface as
- * \code
-    void mz(Qubit, Result);
-    QState read_result(Result);
-    void r(Array, Tuple);  //!< ctl
-    void r_adj(Pauli, double, Qubit);  //!< adj
- * \endcode
+ * \verbatim
+void mz(Qubit, Result);
+QState read_result(Result);
+void r(Array, Tuple);  //!< ctl
+void r_adj(Pauli, double, Qubit);  //!< adj
+ * \endverbatim
  *
  * \note These are generated from scripts/dev/generate-bindings.py .
  */
