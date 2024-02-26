@@ -33,6 +33,7 @@ endmacro()
 #----------------------------------------------------------------------------#
 
 # Components
+option(QIREE_BUILD_DOCS "Build QIR-EE documentation" OFF)
 option(QIREE_BUILD_TESTS "Build QIR-EE unit tests" ON)
 option(QIREE_USE_XACC "Build XACC interface" OFF)
 qiree_set_default(BUILD_TESTING ${QIREE_BUILD_TESTS})
@@ -117,6 +118,17 @@ if(QIREE_USE_XACC)
   find_package(XACC REQUIRED)
 endif()
 
+if(QIREE_BUILD_DOCS)
+  if(NOT Doxygen_FOUND)
+    find_package(Doxygen)
+  endif()
+  if(NOT Doxygen_FOUND)
+    message(SEND_ERROR
+      "Doxygen is required for building documentation but was not found"
+    )
+  endif()
+
+endif()
 if(QIREE_BUILD_TESTS AND NOT GTest_FOUND)
   find_package(GTest)
   if(NOT GTest_FOUND)
@@ -152,9 +164,9 @@ add_subdirectory(app)
 # DOCUMENTATION
 #----------------------------------------------------------------------------#
 
-# if(QIREE_BUILD_DOCS)
-#   add_subdirectory(doc)
-# endif()
+if(QIREE_BUILD_DOCS)
+  add_subdirectory(doc)
+endif()
 
 #----------------------------------------------------------------------------#
 # CONFIG FILE INSTALLATION

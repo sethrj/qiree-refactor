@@ -3,7 +3,7 @@
 // See the top-level COPYRIGHT file for details.
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 //---------------------------------------------------------------------------//
-//! \file qiree/QirModule.hh
+//! \file qiree/Module.hh
 //---------------------------------------------------------------------------//
 #pragma once
 

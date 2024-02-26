@@ -48,7 +48,7 @@ class QuantumInterface
     virtual void set_up(EntryPointAttrs const&) = 0;
     //! Complete an execution
     virtual void tear_down() = 0;
-    //!@}
+    //@}
 
     //@{
     //! \name Measurements
