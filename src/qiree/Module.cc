@@ -68,7 +68,8 @@ llvm::Function* find_entry_point(llvm::Module& m)
                 if (attr.isStringAttribute())
                 {
                     auto s = attr.getKindAsString();
-                    if (s == "entry_point")
+                    if (s == "entry_point"
+                        || s == "EntryPoint") // BAD: multiplefunction.ll
                     {
                         return &f;
                     }
