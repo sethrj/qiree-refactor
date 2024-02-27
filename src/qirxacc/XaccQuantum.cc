@@ -10,6 +10,7 @@
 #include <algorithm>
 #include <iostream>
 #include <utility>
+#include <stdexcept>
 #include <xacc/xacc.hpp>
 
 #include "qiree/Assert.hh"
@@ -111,6 +112,7 @@ void XaccQuantum::mz(Qubit q, Result r)
     QIREE_EXPECT(r.value < this->num_results());
 
     result_to_qubit_[r.value] = q;
+    this->add_instruction("Measure", {q}, static_cast<int>(r.value));
 }
 
 //---------------------------------------------------------------------------//
