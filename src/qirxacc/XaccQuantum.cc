@@ -145,8 +145,6 @@ QState XaccQuantum::read_result(Result r)
 {
     QIREE_EXPECT(r.value < this->num_results());
 
-    output_ << "read_result(R{" << r.value << "} => Q{"
-            << result_to_qubit_[r.value].value << "})";
     return QState::one;
 }
 
