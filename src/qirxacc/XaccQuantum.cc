@@ -168,7 +168,14 @@ void XaccQuantum::initialize(OptionalCString env)
  */
 void XaccQuantum::array_record_output(size_type, OptionalCString)
 {
-    accelerator_->execute(buffer_, cur_circuit_);
+    try
+    {
+        accelerator_->execute(buffer_, cur_circuit_);
+    }
+    catch (std::exception const& e)
+    {
+        output_ << "Failed to execute XACC: " << e.what() << std::endl;
+    }
     buffer_->print(output_);
 }
 
