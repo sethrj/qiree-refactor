@@ -28,7 +28,7 @@ namespace
 /*!
  * Shared, thread-local LLVM context.
  *
- * This must exxceed the lifetime of any IR, modules, etc.
+ * This must exceed the lifetime of any IR, modules, etc.
  */
 llvm::LLVMContext& context()
 {

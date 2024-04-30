@@ -17,12 +17,16 @@ namespace qiree
  namespace.
  *
  * This class should subsume all known Quantum Instruction Set (QIS)
- * definitions. The QIR specification does not explicitly list these operations
+ * definitions. The QIR specification does not explicitly list these
+ * operations...
  *
  * An instance of this class should be stateful (i.e. set up, store, and
  * measure the quantum circuit).
  *
- * These are mapped to QIR functions:
+ * TODO: at the beginning of an "entry point" the quantum device should have a
+ * state initialized to zero.
+ *
+ * These QIR functions:
  * \verbatim
 void @__quantum__qis__mz__body(%Qubit*, %Result*)
 bool @__quantum__qis__read_result__body(%Result*)
